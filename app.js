@@ -216,13 +216,23 @@ const flightDB = {
 };
 
 
-/*— NAVIGATION —*/
+/*— NAVIGATION — single clean definition —*/
 function switchTab(tab) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('s-' + tab).classList.add('active');
   const navTab = document.getElementById('tab-' + tab);
   if (navTab) navTab.classList.add('active');
+  // Restore bottom nav when leaving checkout
+  const nav = document.querySelector('.bottom-nav');
+  if (nav) nav.style.display = tab === 'checkout' ? 'none' : 'flex';
+  // Bot greeting on first open
+  if (tab === 'bot') {
+    const msgs = document.getElementById('bot-messages');
+    if (msgs && msgs.children.length === 0) {
+      setTimeout(() => addBotMessage("Hi! I'm your FliteMate AI assistant. Ask me anything about your trip — flights, immigration, baggage, the emergency fund, or airport tips. 👋", 'ai'), 300);
+    }
+  }
 }
 
 /*— DEST NAMES —*/
@@ -239,7 +249,6 @@ const destNames = {
   JNB:'Johannesburg',NBO:'Nairobi',AKL:'Auckland'
 };
 
-/*— DEST CHANGE —*/
 function onDestChange() {
   const dest = document.getElementById('dest-select').value;
   if (dest && destNames[dest]) {
@@ -259,7 +268,6 @@ function goToFlight(dest) {
   switchTab('trips');
 }
 
-/*— DEST REF TOGGLE —*/
 function toggleDestRef() {
   const body = document.getElementById('dest-ref-body');
   const arrow = document.getElementById('dest-ref-arrow');
@@ -289,49 +297,38 @@ function renderFlights() {
   if (state.filters.studentVerified) flights = flights.filter(f => f.studentVerified);
   if (state.filters.bagsIncluded) flights = flights.filter(f => f.bagsIncl);
   if (state.filters.unsoldSeats) flights = flights.filter(f => f.lastMinute);
-  flights = flights.sort((a, b) => a.total - b.total);
-
+  flights = flights.sort((a,b) => a.total - b.total);
   if (!flights.length) {
     label.textContent = '0 results — try adjusting filters';
     container.innerHTML = `<div style="text-align:center;padding:28px 20px;color:var(--muted);font-size:13px;">No flights match your current filters.<br><span style="font-size:12px;">Try turning off a filter above.</span></div>`;
     return;
   }
-
   const destLabel = destNames[dest] || dest;
-  label.textContent = `${flights.length} result${flights.length > 1 ? 's' : ''} — BNE → ${destLabel} — sorted by true total cost`;
-
-  container.innerHTML = flights.map((f, i) => {
-    const isBest = i === 0 && f.type !== 'warn';
+  label.textContent = `${flights.length} result${flights.length>1?'s':''} — BNE → ${destLabel} — sorted by true total cost`;
+  const ribbonMap = { best:'BEST VALUE', warn:'HIDDEN FEES', deal:'LAST-MINUTE DEAL' };
+  container.innerHTML = flights.map((f,i) => {
+    const isBest = i===0 && f.type!=='warn';
     const type = isBest ? 'best' : f.type;
-    const ribbonMap = { best:'BEST VALUE', warn:'HIDDEN FEES', deal:'LAST-MINUTE DEAL' };
     const ribbon = ribbonMap[type] ? `<div class="fc-ribbon ${type}">${ribbonMap[type]}</div>` : '';
     const note = f.note ? `<div class="fc-student-note">🎓 ${f.note}</div>` : '';
-    const totalClass = type === 'warn' ? 'amber' : isBest ? 'green' : 'muted';
-    const bagsClass = f.bagsIncl ? 'g' : 'a';
+    const totalClass = type==='warn'?'amber':isBest?'green':'muted';
+    const bagsClass = f.bagsIncl?'g':'a';
+    const fStr = JSON.stringify(f).replace(/"/g,'&quot;');
     return `<div class="flight-card ${type} anim">
       ${ribbon}
       <div class="fc-body">
         <div class="fc-top">
-          <div>
-            <div class="fc-airline">${f.airline}</div>
-            <div class="fc-route">${f.via}</div>
-            ${note}
-          </div>
-          <div style="text-align:right;">
-            <div class="fc-total ${totalClass}">A$${f.total}</div>
-            <div class="fc-note">true total</div>
-          </div>
+          <div><div class="fc-airline">${f.airline}</div><div class="fc-route">${f.via}</div>${note}</div>
+          <div style="text-align:right;"><div class="fc-total ${totalClass}">A$${f.total}</div><div class="fc-note">true total</div></div>
         </div>
         <div class="fc-breakdown">
           <div class="fc-item"><div class="fc-item-val">A$${f.base}</div><div class="fc-item-lbl">Base</div></div>
           <div class="fc-item"><div class="fc-item-val ${bagsClass}">${f.bags}</div><div class="fc-item-lbl">Bags</div></div>
-          <div class="fc-item"><div class="fc-item-val">${f.seat > 0 ? 'A$'+f.seat : 'Incl.'}</div><div class="fc-item-lbl">Seat</div></div>
+          <div class="fc-item"><div class="fc-item-val">${f.seat>0?'A$'+f.seat:'Incl.'}</div><div class="fc-item-lbl">Seat</div></div>
           <div class="fc-item"><div class="fc-item-val">${f.meal}</div><div class="fc-item-lbl">Meal</div></div>
           <div class="fc-item"><div class="fc-item-val">${f.duration}</div><div class="fc-item-lbl">Journey</div></div>
         </div>
-        <button class="fc-book-btn" onclick="openCheckout(${JSON.stringify(f).replace(/"/g,'&quot;')})">
-          Book this flight — A$${f.total}
-        </button>
+        <button class="fc-book-btn" onclick="openCheckout(${fStr})">Book this flight — A$${f.total}</button>
       </div>
     </div>`;
   }).join('');
@@ -348,8 +345,6 @@ function openCheckout(f) {
   document.getElementById('co-base').textContent = 'A$' + f.base;
   document.getElementById('co-bags').textContent = f.bagsIncl ? 'Included' : f.bags;
   document.getElementById('co-seat').textContent = f.seat > 0 ? 'A$' + f.seat : 'Included';
-  // Hide nav during checkout
-  document.querySelector('.bottom-nav').style.display = 'none';
   switchTab('checkout');
 }
 
@@ -361,36 +356,19 @@ function confirmBooking() {
 
 function postConfirm() {
   document.getElementById('confirm-overlay').style.display = 'none';
-  document.querySelector('.bottom-nav').style.display = 'flex';
   switchTab('checklist');
 }
 
-// Override switchTab to restore nav when leaving checkout
-const _origSwitch = switchTab;
-function switchTab(tab) {
-  if (tab !== 'checkout') {
-    document.querySelector('.bottom-nav').style.display = 'flex';
-  }
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('s-' + tab).classList.add('active');
-  const navTab = document.getElementById('tab-' + tab);
-  if (navTab) navTab.classList.add('active');
-}
-
-/*— CHECKLIST — fixed checkbox toggle —*/
+/*— CHECKLIST —*/
 function toggleItem(el) {
   const box = el.querySelector('.check-box-ui');
-  if (box) {
-    box.classList.toggle('done');
-    updateProgress();
-  }
+  if (box) { box.classList.toggle('done'); updateProgress(); }
 }
 
 function updateProgress() {
   const all = document.querySelectorAll('#s-checklist .check-box-ui');
   const done = document.querySelectorAll('#s-checklist .check-box-ui.done');
-  const pct = all.length > 0 ? Math.round((done.length / all.length) * 100) : 0;
+  const pct = all.length > 0 ? Math.round(done.length/all.length*100) : 0;
   const fill = document.getElementById('progress-fill');
   const lbl = document.getElementById('progress-label');
   if (fill) fill.style.width = pct + '%';
@@ -402,15 +380,8 @@ function toggleQuestions(el) {
   const panel = el.nextElementSibling;
   const arrow = el.querySelector('.expand-arrow');
   const open = panel.style.maxHeight && panel.style.maxHeight !== '0px';
-  if (open) {
-    panel.style.maxHeight = '0px';
-    panel.style.opacity = '0';
-    arrow.style.transform = 'rotate(0deg)';
-  } else {
-    panel.style.maxHeight = panel.scrollHeight + 'px';
-    panel.style.opacity = '1';
-    arrow.style.transform = 'rotate(90deg)';
-  }
+  if (open) { panel.style.maxHeight='0px'; panel.style.opacity='0'; arrow.style.transform='rotate(0deg)'; }
+  else { panel.style.maxHeight=panel.scrollHeight+'px'; panel.style.opacity='1'; arrow.style.transform='rotate(90deg)'; }
 }
 
 /*— AIRPORT STEPS —*/
@@ -418,13 +389,9 @@ function toggleStep(el) {
   const body = el.nextElementSibling;
   const arrow = el.querySelector('.ag-arrow');
   const open = body.classList.contains('open');
-  document.querySelectorAll('.ag-body').forEach(b => { b.classList.remove('open'); b.style.maxHeight = '0px'; });
-  document.querySelectorAll('.ag-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
-  if (!open) {
-    body.classList.add('open');
-    body.style.maxHeight = body.scrollHeight + 'px';
-    arrow.style.transform = 'rotate(180deg)';
-  }
+  document.querySelectorAll('.ag-body').forEach(b => { b.classList.remove('open'); b.style.maxHeight='0px'; });
+  document.querySelectorAll('.ag-arrow').forEach(a => a.style.transform='rotate(0deg)');
+  if (!open) { body.classList.add('open'); body.style.maxHeight=body.scrollHeight+'px'; arrow.style.transform='rotate(180deg)'; }
 }
 
 /*— EMERGENCY STATUS —*/
@@ -432,18 +399,15 @@ function advanceStatus() {
   const steps = document.querySelectorAll('.s-step');
   const lines = document.querySelectorAll('.s-line');
   let current = 0;
-  steps.forEach((s, i) => { if (s.classList.contains('active')) current = i; });
-  steps.forEach(s => s.classList.remove('active', 'done'));
+  steps.forEach((s,i) => { if(s.classList.contains('active')) current=i; });
+  steps.forEach(s => s.classList.remove('active','done'));
   lines.forEach(l => l.classList.remove('done'));
-  const next = Math.min(current + 1, steps.length - 1);
-  for (let i = 0; i < next; i++) {
-    steps[i].classList.add('done');
-    if (lines[i]) lines[i].classList.add('done');
-  }
+  const next = Math.min(current+1, steps.length-1);
+  for (let i=0; i<next; i++) { steps[i].classList.add('done'); if(lines[i]) lines[i].classList.add('done'); }
   steps[next].classList.add('active');
-  if (next === steps.length - 1) {
-    document.getElementById('status-btn').style.display = 'none';
-    document.getElementById('status-approved').style.display = 'block';
+  if (next === steps.length-1) {
+    document.getElementById('status-btn').style.display='none';
+    document.getElementById('status-approved').style.display='block';
   }
 }
 
@@ -451,7 +415,7 @@ function advanceStatus() {
 function getGreeting(lang) {
   const h = new Date().getHours();
   const map = {
-    en:[  'GOOD MORNING','GOOD AFTERNOON','GOOD EVENING'],
+    en:['GOOD MORNING','GOOD AFTERNOON','GOOD EVENING'],
     zh:['早上好','下午好','晚上好'],
     hi:['सुप्रभात','नमस्कार','शुभ संध्या'],
     da:['GOD MORGEN','GOD EFTERMIDDAG','GOD AFTEN'],
@@ -471,8 +435,7 @@ function getGreeting(lang) {
     bn:['শুভ সকাল','শুভ দুপুর','শুভ সন্ধ্যা'],
   };
   const times = map[lang] || map.en;
-  const idx = h < 12 ? 0 : h < 17 ? 1 : 2;
-  return times[idx];
+  return times[h<12?0:h<17?1:2];
 }
 
 /*— LANGUAGE —*/
@@ -480,168 +443,130 @@ const i18n = {
   en:{hero:'Where are you headed?',alertTitle:'Price drop alert',alertBody:'BNE → Guangzhou from A$521 — 2 seats left',qa1:'Find flights',qa2:'Checklist',qa3:'Airport guide',qa4:'Emergency',firsttime:'First time flying from Brisbane?'},
   zh:{hero:'你要去哪里？',alertTitle:'价格下降提醒',alertBody:'BNE → 广州 仅需 A$521 — 剩余 2 个座位',qa1:'查找航班',qa2:'清单',qa3:'机场指南',qa4:'紧急支持',firsttime:'第一次从布里斯班飞行？'},
   hi:{hero:'आप कहाँ जा रहे हैं?',alertTitle:'कीमत गिरने की सूचना',alertBody:'BNE → गुआंगझू A$521 से — 2 सीटें बची',qa1:'उड़ानें',qa2:'चेकलिस्ट',qa3:'हवाई अड्डा',qa4:'आपातकाल',firsttime:'पहली बार ब्रिस्बेन से उड़ रहे हैं?'},
-  da:{hero:'Hvor er du på vej hen?',alertTitle:'Prisfaldsadvarsel',alertBody:'BNE → Guangzhou fra A$521 — 2 sæder tilbage',qa1:'Find fly',qa2:'Tjekliste',qa3:'Lufthavnsvejledning',qa4:'Nødsituation',firsttime:'Flyver du for første gang fra Brisbane?'},
-  no:{hero:'Hvor skal du hen?',alertTitle:'Prisvarsel',alertBody:'BNE → Guangzhou fra A$521 — 2 seter igjen',qa1:'Finn fly',qa2:'Sjekkliste',qa3:'Flyplassveiledning',qa4:'Nødsituasjon',firsttime:'Flyr du for første gang fra Brisbane?'},
+  da:{hero:'Hvor er du på vej hen?',alertTitle:'Prisfaldsadvarsel',alertBody:'BNE → Guangzhou fra A$521 — 2 sæder tilbage',qa1:'Find fly',qa2:'Tjekliste',qa3:'Lufthavn guide',qa4:'Nødsituation',firsttime:'Flyver du første gang fra Brisbane?'},
+  no:{hero:'Hvor skal du hen?',alertTitle:'Prisvarsel',alertBody:'BNE → Guangzhou fra A$521 — 2 seter igjen',qa1:'Finn fly',qa2:'Sjekkliste',qa3:'Flyplassveiledning',qa4:'Nødsituasjon',firsttime:'Flyr du første gang fra Brisbane?'},
   ko:{hero:'어디로 가십니까?',alertTitle:'가격 인하 알림',alertBody:'BNE → 광저우 A$521부터 — 2석 남음',qa1:'항공편 검색',qa2:'체크리스트',qa3:'공항 안내',qa4:'긴급 지원',firsttime:'브리즈번에서 처음 비행하시나요?'},
   ja:{hero:'どこへ向かいますか？',alertTitle:'価格下落アラート',alertBody:'BNE → 広州 A$521から — 残り2席',qa1:'フライト検索',qa2:'チェックリスト',qa3:'空港ガイド',qa4:'緊急サポート',firsttime:'ブリスベンから初めて飛行しますか？'},
-  ar:{hero:'إلى أين أنت ذاهب؟',alertTitle:'تنبيه انخفاض السعر',alertBody:'BNE → غوانغتشو من A$521 — مقعدان متبقيان',qa1:'ابحث عن رحلات',qa2:'قائمة التحقق',qa3:'دليل المطار',qa4:'الطوارئ',firsttime:'هل تطير لأول مرة من بريزبان؟'},
+  ar:{hero:'إلى أين أنت ذاهب؟',alertTitle:'تنبيه انخفاض السعر',alertBody:'BNE → غوانغتشو من A$521',qa1:'رحلات',qa2:'قائمة',qa3:'دليل المطار',qa4:'الطوارئ',firsttime:'هل تطير لأول مرة من بريزبان؟'},
   vi:{hero:'Bạn đang đi đâu?',alertTitle:'Thông báo giảm giá',alertBody:'BNE → Quảng Châu từ A$521 — còn 2 ghế',qa1:'Tìm chuyến bay',qa2:'Danh sách',qa3:'Hướng dẫn sân bay',qa4:'Khẩn cấp',firsttime:'Lần đầu bay từ Brisbane?'},
-  ne:{hero:'तपाई कहाँ जाँदै हुनुहुन्छ?',alertTitle:'मूल्य घट्ने सूचना',alertBody:'BNE → गुवाङझउ A$521 बाट — 2 सिट बाँकी',qa1:'उडान खोज्नुहोस्',qa2:'सूची',qa3:'विमानस्थल गाइड',qa4:'आपतकाल',firsttime:'पहिलो पटक ब्रिस्बेनबाट उड्दै?'},
+  ne:{hero:'तपाई कहाँ जाँदै हुनुहुन्छ?',alertTitle:'मूल्य घट्ने सूचना',alertBody:'BNE → गुवाङझउ A$521 बाट',qa1:'उडान',qa2:'सूची',qa3:'विमानस्थल गाइड',qa4:'आपतकाल',firsttime:'पहिलो पटक ब्रिस्बेनबाट उड्दै?'},
   id:{hero:'Mau kemana kamu?',alertTitle:'Penurunan harga',alertBody:'BNE → Guangzhou mulai A$521 — 2 kursi tersisa',qa1:'Cari penerbangan',qa2:'Checklist',qa3:'Panduan bandara',qa4:'Darurat',firsttime:'Pertama kali terbang dari Brisbane?'},
-  es:{hero:'¿A dónde vas?',alertTitle:'Alerta de bajada de precio',alertBody:'BNE → Guangzhou desde A$521 — quedan 2 asientos',qa1:'Buscar vuelos',qa2:'Lista',qa3:'Guía del aeropuerto',qa4:'Emergencia',firsttime:'¿Primera vez volando desde Brisbane?'},
-  pt:{hero:'Para onde você vai?',alertTitle:'Alerta de queda de preço',alertBody:'BNE → Guangzhou a partir de A$521 — 2 assentos',qa1:'Buscar voos',qa2:'Lista',qa3:'Guia do aeroporto',qa4:'Emergência',firsttime:'Primeira vez voando de Brisbane?'},
-  fr:{hero:'Où allez-vous?',alertTitle:'Alerte baisse de prix',alertBody:'BNE → Guangzhou dès A$521 — 2 sièges restants',qa1:'Trouver des vols',qa2:'Liste de contrôle',qa3:'Guide aéroport',qa4:'Urgence',firsttime:'Premier vol depuis Brisbane?'},
-  de:{hero:'Wohin geht es?',alertTitle:'Preisrückgang-Alarm',alertBody:'BNE → Guangzhou ab A$521 — noch 2 Plätze',qa1:'Flüge suchen',qa2:'Checkliste',qa3:'Flughafenführer',qa4:'Notfall',firsttime:'Erster Flug von Brisbane?'},
-  tl:{hero:'Saan ka pupunta?',alertTitle:'Babala sa pagbaba ng presyo',alertBody:'BNE → Guangzhou mula A$521 — 2 upuan na lang',qa1:'Hanapin ang flight',qa2:'Checklist',qa3:'Gabay sa paliparan',qa4:'Emergency',firsttime:'Unang beses lumilipad mula Brisbane?'},
-  ta:{hero:'எங்கே செல்கிறீர்கள்?',alertTitle:'விலை குறைவு எச்சரிக்கை',alertBody:'BNE → குவாங்சோ A$521 முதல் — 2 இருக்கைகள்',qa1:'விமானங்கள் தேட',qa2:'சரிபார்ப்பு பட்டியல்',qa3:'விமான நிலைய வழிகாட்டி',qa4:'அவசரநிலை',firsttime:'பிரிஸ்பேனில் இருந்து முதல் முறை?'},
-  bn:{hero:'আপনি কোথায় যাচ্ছেন?',alertTitle:'মূল্য হ্রাস সতর্কতা',alertBody:'BNE → গুয়াংজু A$521 থেকে — ২টি আসন বাকি',qa1:'ফ্লাইট খুঁজুন',qa2:'চেকলিস্ট',qa3:'বিমানবন্দর গাইড',qa4:'জরুরি',firsttime:'ব্রিসবেন থেকে প্রথমবার উড়ছেন?'},
+  es:{hero:'¿A dónde vas?',alertTitle:'Alerta de bajada de precio',alertBody:'BNE → Guangzhou desde A$521',qa1:'Buscar vuelos',qa2:'Lista',qa3:'Guía del aeropuerto',qa4:'Emergencia',firsttime:'¿Primera vez volando desde Brisbane?'},
+  pt:{hero:'Para onde você vai?',alertTitle:'Alerta de queda de preço',alertBody:'BNE → Guangzhou a partir de A$521',qa1:'Buscar voos',qa2:'Lista',qa3:'Guia do aeroporto',qa4:'Emergência',firsttime:'Primeira vez voando de Brisbane?'},
+  fr:{hero:'Où allez-vous?',alertTitle:'Alerte baisse de prix',alertBody:'BNE → Guangzhou dès A$521',qa1:'Trouver des vols',qa2:'Liste',qa3:'Guide aéroport',qa4:'Urgence',firsttime:'Premier vol depuis Brisbane?'},
+  de:{hero:'Wohin geht es?',alertTitle:'Preisrückgang-Alarm',alertBody:'BNE → Guangzhou ab A$521',qa1:'Flüge suchen',qa2:'Checkliste',qa3:'Flughafenführer',qa4:'Notfall',firsttime:'Erster Flug von Brisbane?'},
+  tl:{hero:'Saan ka pupunta?',alertTitle:'Babala sa pagbaba ng presyo',alertBody:'BNE → Guangzhou mula A$521',qa1:'Hanapin ang flight',qa2:'Checklist',qa3:'Gabay sa paliparan',qa4:'Emergency',firsttime:'Unang beses lumilipad mula Brisbane?'},
+  ta:{hero:'எங்கே செல்கிறீர்கள்?',alertTitle:'விலை குறைவு எச்சரிக்கை',alertBody:'BNE → குவாங்சோ A$521 முதல்',qa1:'விமானங்கள்',qa2:'சரிபார்ப்பு பட்டியல்',qa3:'விமான நிலைய வழிகாட்டி',qa4:'அவசரநிலை',firsttime:'பிரிஸ்பேனில் இருந்து முதல் முறை?'},
+  bn:{hero:'আপনি কোথায় যাচ্ছেন?',alertTitle:'মূল্য হ্রাস সতর্কতা',alertBody:'BNE → গুয়াংজু A$521 থেকে',qa1:'ফ্লাইট খুঁজুন',qa2:'চেকলিস্ট',qa3:'বিমানবন্দর গাইড',qa4:'জরুরি',firsttime:'ব্রিসবেন থেকে প্রথমবার উড়ছেন?'},
 };
 
 function setLang(l) {
   state.lang = l;
   localStorage.setItem('fm_lang', l);
   const s = i18n[l] || i18n.en;
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const set = (id,val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
   set('h-greeting', getGreeting(l));
   set('h-hero', s.hero);
   set('h-alert-title', s.alertTitle);
   set('h-alert-body', s.alertBody);
   set('h-qa1', s.qa1); set('h-qa2', s.qa2); set('h-qa3', s.qa3); set('h-qa4', s.qa4);
-  const dest = document.getElementById('dest-select') ? document.getElementById('dest-select').value : '';
+  const dest = document.getElementById('dest-select')?.value;
   const destName = dest && destNames[dest] ? destNames[dest] : null;
   set('h-firsttime', destName ? s.firsttime.replace('Brisbane', destName) : s.firsttime);
   const sel = document.getElementById('lang-select');
   if (sel) sel.value = l;
 }
 
-/*— INIT —*/
-const dateInput = document.getElementById('date-input');
-if (dateInput) dateInput.valueAsDate = new Date();
-const destSel = document.getElementById('dest-select');
-if (destSel) destSel.addEventListener('change', onDestChange);
-updateProgress();
-const initLang = localStorage.getItem('fm_lang') || 'en';
-setLang(initLang);
-
-/*— FEEDBACK FORM — one-time, end of journey —*/
+/*— FEEDBACK FORM —*/
 const FEEDBACK_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyuIBBlJp0pFt75L9vaMbpDMwUxjQWEJBpOpT7hMcROTADReVXccRfGsv-tTeirGO1n8A/exec";
-
 const fbRatings = {};
 let fbEase = 0;
 
-// Render star groups after DOM ready
-document.querySelectorAll('.fb-stars').forEach(container => {
-  const feature = container.dataset.feature;
-  fbRatings[feature] = 0;
-  for (let i = 1; i <= 5; i++) {
-    const star = document.createElement('span');
-    star.className = 'fb-star';
-    star.textContent = '⭐';
-    star.dataset.val = i;
-    star.onclick = () => {
-      fbRatings[feature] = i;
-      container.querySelectorAll('.fb-star').forEach((s, idx) => s.classList.toggle('lit', idx < i));
-    };
-    container.appendChild(star);
-  }
-});
+function initFeedbackStars() {
+  document.querySelectorAll('.fb-stars').forEach(container => {
+    const feature = container.dataset.feature;
+    fbRatings[feature] = 0;
+    for (let i=1; i<=5; i++) {
+      const star = document.createElement('span');
+      star.className = 'fb-star';
+      star.textContent = '⭐';
+      star.dataset.val = i;
+      star.onclick = () => {
+        fbRatings[feature] = i;
+        container.querySelectorAll('.fb-star').forEach((s,idx) => s.classList.toggle('lit', idx<i));
+      };
+      container.appendChild(star);
+    }
+  });
+}
 
 function selectEase(el) {
   fbEase = parseInt(el.dataset.val);
-  document.querySelectorAll('.ease-btn').forEach(b => b.classList.toggle('selected', b === el));
+  document.querySelectorAll('.ease-btn').forEach(b => b.classList.toggle('selected', b===el));
 }
 
 async function submitFullFeedback() {
   const comment = document.getElementById('fb-comment').value.trim();
   const name = document.getElementById('fb-name').value.trim() || 'Anonymous';
   const btn = document.getElementById('fb-submit-btn');
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  const avg = Object.values(fbRatings).reduce((a,b)=>a+b,0) / Math.max(Object.keys(fbRatings).length,1);
   const payload = {
-    name,
-    feature: 'full-journey-feedback',
-    ease: fbEase,
-    stars: Math.round(Object.values(fbRatings).reduce((a,b) => a+b, 0) / Object.keys(fbRatings).length) || 0,
-    comment: `Flights:${fbRatings.flights}★ Checklist:${fbRatings.checklist}★ Airport:${fbRatings.airport}★ Emergency:${fbRatings.emergency}★ Ease:${fbEase}/5 | ${comment}`
+    name, feature:'full-journey-feedback', ease:fbEase, stars:Math.round(avg)||0,
+    comment:`Flights:${fbRatings.flights||0}★ Checklist:${fbRatings.checklist||0}★ Airport:${fbRatings.airport||0}★ Emergency:${fbRatings.emergency||0}★ Ease:${fbEase}/5 | ${comment}`
   };
-
-  try {
-    await fetch(FEEDBACK_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-  } catch(e) { console.log('Sheets:', e); }
-
-  document.getElementById('feedback-form-wrap').style.display = 'none';
-  document.getElementById('feedback-success').style.display = 'block';
+  try { await fetch(FEEDBACK_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); } catch(e) {}
+  document.getElementById('feedback-form-wrap').style.display='none';
+  document.getElementById('feedback-success').style.display='block';
 }
 
 /*— AI BOT —*/
-const BOT_CONTEXT = `You are FliteMate, an AI travel assistant for international students flying home from Brisbane (BNE), Australia. You help students with:
-- Flight search, true total cost breakdown, baggage allowances, student fares
-- Immigration procedures at BNE: SmartGate, customs declaration, common questions officers ask
-- Airport guide: check-in, baggage drop, security, boarding, layovers
-- Emergency travel fund: how it works (not a loan, A$25/semester opt-in, university co-funded, A$1200 max, 3-5 day approval)
-- Visa requirements for common student home countries (India, China, Nepal, Vietnam, Indonesia, Korea, Japan)
-- General travel tips for long-haul flights
-
-Keep answers concise, friendly, and specific to international students in Australia. Max 3-4 sentences per answer. If unsure, say so and suggest they check official sources.`;
-
+const BOT_CONTEXT = `You are FliteMate, an AI travel assistant for international students flying home from Brisbane (BNE), Australia. Help with: flight search and true total cost, baggage allowances, immigration at BNE (SmartGate, customs, likely questions), airport guide (check-in, security, boarding, layovers), emergency travel fund (not a loan, A$25/semester, university co-funded, A$1200 max, 3-5 day approval), visa requirements for India, China, Nepal, Vietnam, Indonesia, Korea, Japan. Keep answers concise — max 3-4 sentences. If unsure, direct to official sources.`;
 const botHistory = [];
 
 function addBotMessage(text, role) {
   const messages = document.getElementById('bot-messages');
+  if (!messages) return;
   const div = document.createElement('div');
   div.className = `bot-msg ${role}`;
   div.textContent = text;
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
-  return div;
 }
 
 function showTyping() {
   const messages = document.getElementById('bot-messages');
+  if (!messages) return;
   const div = document.createElement('div');
-  div.className = 'bot-typing';
-  div.id = 'bot-typing';
+  div.className = 'bot-typing'; div.id = 'bot-typing';
   div.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
 
-function hideTyping() {
-  const el = document.getElementById('bot-typing');
-  if (el) el.remove();
-}
+function hideTyping() { const el=document.getElementById('bot-typing'); if(el) el.remove(); }
 
 async function sendBotMessage(text) {
-  // Hide suggestions after first message
   const suggestions = document.getElementById('bot-suggestions');
   if (suggestions) suggestions.style.display = 'none';
-
   addBotMessage(text, 'user');
-  botHistory.push({ role: 'user', content: text });
+  botHistory.push({role:'user',content:text});
   document.getElementById('bot-input').value = '';
-
   showTyping();
-
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 300,
-        system: BOT_CONTEXT,
-        messages: botHistory
-      })
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:BOT_CONTEXT,messages:botHistory})
     });
     const data = await response.json();
-    const reply = data.content?.[0]?.text || "I'm not sure about that — check official airline or government sources for the latest info.";
+    const reply = data.content?.[0]?.text || "I'm not sure — check the Checklist tab for immigration and airport info.";
     hideTyping();
     addBotMessage(reply, 'ai');
-    botHistory.push({ role: 'assistant', content: reply });
+    botHistory.push({role:'assistant',content:reply});
   } catch(e) {
     hideTyping();
-    addBotMessage("Sorry, I'm having trouble connecting right now. Try checking the Checklist tab for immigration and airport info.", 'ai');
+    addBotMessage("Having trouble connecting right now. Check the Checklist and Airport tabs for the info you need.", 'ai');
   }
 }
 
@@ -653,13 +578,12 @@ function sendBotFromInput() {
   input.style.height = '46px';
 }
 
-// Add greeting when bot tab opens
-const origSwitchTab = switchTab;
-function switchTab(tab) {
-  origSwitchTab(tab);
-  if (tab === 'bot' && document.getElementById('bot-messages').children.length === 0) {
-    setTimeout(() => {
-      addBotMessage("Hi! I'm your FliteMate AI assistant. Ask me anything about your trip — flights, immigration, baggage, the emergency fund, or airport tips. 👋", 'ai');
-    }, 300);
-  }
-}
+/*— INIT —*/
+const dateInput = document.getElementById('date-input');
+if (dateInput) dateInput.valueAsDate = new Date();
+const destSel = document.getElementById('dest-select');
+if (destSel) destSel.addEventListener('change', onDestChange);
+initFeedbackStars();
+updateProgress();
+const initLang = localStorage.getItem('fm_lang') || 'en';
+setLang(initLang);
