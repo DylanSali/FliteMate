@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>FliteMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f3ee;--white:#fff;--black:#0f0f0f;--navy:#1a1a2e;--green:#2d6a4f;--green-light:#d8f3dc;--green-mid:#52b788;--amber:#e76f51;--amber-light:#fde8df;--blue:#2563eb;--blue-light:#dbeafe;--muted:#6b7280;--border:#e5e2da;--surface:#fffffe;--display:'Bricolage Grotesque',sans-serif;--mono:'DM Mono',monospace;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);font-family:var(--display);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px;}
+
+/* Phone */
+.phone-wrap{width:100%;max-width:390px;background:var(--white);border-radius:40px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.18),0 0 0 1px rgba(0,0,0,0.06);min-height:820px;display:flex;flex-direction:column;}
+
+/* Top bar with logo */
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 8px;background:var(--white);border-bottom:1px solid var(--border);flex-shrink:0;}
+.top-logo{display:flex;align-items:center;gap:8px;}
+.top-logo img{width:28px;height:28px;object-fit:contain;}
+.top-logo-name{font-size:16px;font-weight:700;color:var(--navy);letter-spacing:-0.3px;}
+.top-right{display:flex;align-items:center;gap:8px;}
+.lang-select{background:transparent;border:1px solid var(--border);border-radius:20px;padding:4px 22px 4px 8px;font-family:var(--mono);font-size:10px;color:var(--muted);cursor:pointer;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%236b7280'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;}
+
+/* Screens */
+.screens{flex:1;overflow:hidden;position:relative;}
+.screen{position:absolute;inset:0;overflow-y:auto;padding-bottom:80px;display:none;}
+.screen.active{display:block;}
+.screen::-webkit-scrollbar{display:none;}
+
+/* Nav */
+.bottom-nav{display:flex;background:var(--white);border-top:1px solid var(--border);padding:8px 0 20px;flex-shrink:0;}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 2px;border:none;background:none;font-family:var(--display);font-size:9px;color:var(--muted);transition:color 0.15s;}
+.nav-tab.active{color:var(--green);}
+.nav-tab svg{width:20px;height:20px;stroke-width:1.8;stroke:currentColor;fill:none;}
+.nav-tab.active svg{stroke:var(--green);}
+
+/* Shared */
+.h1{font-size:26px;font-weight:700;letter-spacing:-0.5px;line-height:1.15;}
+.h2{font-size:18px;font-weight:600;letter-spacing:-0.2px;}
+.small{font-size:12px;color:var(--muted);}
+.px{padding:0 20px;}
+.section{padding:16px 20px;}
+.divider{height:1px;background:var(--border);margin:0 20px;}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;}
+.chip-green{background:var(--green-light);color:var(--green);}
+.chip-amber{background:var(--amber-light);color:var(--amber);}
+.chip-blue{background:var(--blue-light);color:var(--blue);}
+.chip-gray{background:#f3f4f6;color:var(--muted);}
+.chip-red{background:#fee2e2;color:#dc2626;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:14px;font-family:var(--display);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:transform 0.1s;width:100%;}
+.btn:active{transform:scale(0.97);}
+.btn-navy{background:var(--navy);color:white;}
+.btn-green{background:var(--green);color:white;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--black);}
+.btn-amber{background:var(--amber);color:white;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;}
+
+/* HOME */
+.home-hero{background:var(--navy);padding:20px 20px 24px;color:white;}
+.home-greeting{font-size:13px;opacity:0.6;margin-bottom:4px;}
+.home-hero .h1{color:white;margin-bottom:14px;}
+.journey-card{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:14px 16px;}
+.journey-stages{display:flex;align-items:center;margin-top:10px;}
+.j-stage{flex:1;text-align:center;}
+.j-dot{width:10px;height:10px;border-radius:50%;margin:0 auto 4px;background:rgba(255,255,255,0.3);}
+.j-dot.done{background:var(--green-mid);}
+.j-dot.active{background:white;box-shadow:0 0 0 3px rgba(255,255,255,0.3);}
+.j-line{flex:1;height:1px;background:rgba(255,255,255,0.2);position:relative;top:-7px;}
+.j-line.done{background:var(--green-mid);}
+.j-label{font-size:9px;opacity:0.7;font-family:var(--mono);}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px;}
+.qa-btn{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;transition:all 0.15s;text-align:left;display:flex;flex-direction:column;gap:6px;}
+.qa-btn:hover{border-color:var(--green);transform:translateY(-1px);}
+.qa-icon{font-size:20px;}
+.qa-label{font-size:13px;font-weight:600;}
+.qa-sub{font-size:11px;color:var(--muted);}
+.alert-strip{margin:0 20px 14px;background:var(--green-light);border:1px solid rgba(45,106,79,0.2);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.alert-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(45,106,79,0.4)}50%{box-shadow:0 0 0 6px rgba(45,106,79,0)}}
+
+/* FLIGHTS */
+.search-box{margin:14px 20px;background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;}
+.search-row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);}
+.search-row:last-child{border-bottom:none;}
+.search-row svg{width:15px;height:15px;color:var(--muted);flex-shrink:0;stroke:currentColor;fill:none;}
+.search-row input,.search-row select{border:none;outline:none;font-family:var(--display);font-size:14px;background:transparent;flex:1;color:var(--black);-webkit-appearance:none;appearance:none;}
+.search-row input::placeholder,.search-row select::placeholder{color:var(--muted);}
+.filter-row{display:flex;gap:8px;padding:0 20px 14px;overflow-x:auto;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{flex-shrink:0;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:var(--display);transition:all 0.15s;}
+.filter-chip.on{background:var(--navy);color:white;border-color:var(--navy);}
+.result-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;padding:0 20px 8px;text-transform:uppercase;}
+.flight-card{margin:0 20px 10px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
+.flight-card:hover{border-color:var(--green);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+.flight-card.best{border-color:var(--green);}
+.flight-card.warn{border-color:var(--amber);}
+.flight-card.deal{border-color:#7c3aed;}
+.ribbon{position:absolute;top:0;right:0;font-size:9px;font-weight:600;font-family:var(--mono);padding:4px 10px;border-radius:0 18px 0 10px;letter-spacing:0.05em;}
+.ribbon-green{background:var(--green);color:white;}
+.ribbon-amber{background:var(--amber);color:white;}
+.ribbon-purple{background:#7c3aed;color:white;}
+.ribbon-blue{background:var(--blue);color:white;}
+.ribbon-red{background:#dc2626;color:white;}
+.fc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.fc-airline{font-size:14px;font-weight:600;}
+.fc-route{font-size:11px;color:var(--muted);margin-top:1px;font-family:var(--mono);}
+.fc-total{font-size:20px;font-weight:700;}
+.fc-note{font-size:10px;color:var(--muted);}
+.fc-breakdown{background:#f9f8f5;border-radius:10px;padding:9px 12px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+.fc-item{text-align:center;}
+.fc-item-val{font-size:11px;font-weight:600;font-family:var(--mono);}
+.fc-item-lbl{font-size:9px;color:var(--muted);}
+
+/* CHECKLIST */
+.checklist-header{background:var(--navy);padding:18px 20px 22px;color:white;}
+.progress-bar{background:rgba(255,255,255,0.2);border-radius:4px;height:5px;margin-top:12px;overflow:hidden;}
+.progress-fill{background:var(--green-mid);height:100%;border-radius:4px;transition:width 0.4s ease;}
+.check-section{padding:14px 20px 8px;}
+.check-section-label{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.check-item:last-child{border-bottom:none;}
+.check-box-ui{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
+.check-box-ui.done{background:var(--green);border-color:var(--green);}
+.check-box-ui.done::after{content:'';display:block;width:6px;height:10px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px);}
+.check-main{font-size:14px;font-weight:500;}
+.check-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.expand-trigger{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.expand-arrow{margin-left:auto;font-size:13px;color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-top:2px;}
+.expand-panel{max-height:0;overflow:hidden;opacity:0;transition:max-height 0.3s ease,opacity 0.3s ease;}
+.expand-panel-inner{background:var(--blue-light);border-radius:12px;margin:0 0 10px;padding:12px 14px;}
+.q-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid rgba(37,99,235,0.1);font-size:12px;}
+.q-item:last-child{border-bottom:none;}
+.q-num{font-family:var(--mono);font-size:10px;color:var(--blue);font-weight:600;flex-shrink:0;width:20px;}
+.q-text{color:var(--navy);line-height:1.5;}
+.q-tip{font-size:11px;color:var(--blue);margin-top:2px;}
+.doc-link{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);text-decoration:none;}
+.doc-link:last-child{border-bottom:none;}
+.doc-link-text{font-size:13px;font-weight:500;color:var(--blue);}
+.doc-link-sub{font-size:11px;color:var(--muted);}
+
+/* AIRPORT */
+.airport-hero{background:linear-gradient(135deg,#1a1a2e 0%,#0d2137 100%);padding:20px 20px 22px;color:white;}
+.ag-step{margin:0 20px 8px;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.ag-header{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;background:var(--surface);transition:background 0.15s;}
+.ag-header:hover{background:#f9f8f5;}
+.ag-num{width:26px;height:26px;border-radius:50%;background:var(--navy);color:white;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ag-title{font-size:14px;font-weight:600;flex:1;}
+.ag-sub-label{font-size:11px;color:var(--muted);}
+.step-arrow{font-size:13px;color:var(--muted);transition:transform 0.25s;}
+.ag-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease;background:#f9f8f5;}
+.ag-body.open{border-top:1px solid var(--border);}
+.ag-body-inner{padding:13px 16px;}
+.ag-tip{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.5;}
+.ag-tip:last-child{border-bottom:none;}
+.ag-tip-icon{font-size:14px;flex-shrink:0;}
+.ag-tip-text{color:var(--muted);}
+.ag-tip-text strong{color:var(--black);}
+
+/* EMERGENCY */
+.emergency-hero{background:linear-gradient(135deg,#1a1a2e 0%,#2d1b1b 100%);padding:20px 20px 22px;color:white;}
+.emergency-card{margin:14px 20px;border:1.5px solid var(--border);border-radius:18px;overflow:hidden;}
+.ec-header{padding:13px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.ec-icon{font-size:20px;}
+.ec-title{font-size:14px;font-weight:600;}
+.ec-sub{font-size:12px;color:var(--muted);}
+.ec-body{padding:13px 16px;}
+.fund-bar-bg{background:var(--border);border-radius:4px;height:8px;overflow:hidden;margin-bottom:6px;}
+.fund-bar-fill{background:var(--green);height:100%;border-radius:4px;width:68%;}
+.fund-meta{display:flex;justify-content:space-between;font-size:11px;}
+.status-track{display:flex;align-items:center;margin:12px 0;}
+.status-step{flex:1;text-align:center;}
+.status-step-dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:white;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);transition:all 0.3s;}
+.status-step.done .status-step-dot{background:var(--green);border-color:var(--green);color:white;}
+.status-step.active .status-step-dot{background:var(--navy);border-color:var(--navy);color:white;box-shadow:0 0 0 3px rgba(26,26,46,0.15);}
+.status-step-label{font-size:10px;color:var(--muted);font-family:var(--mono);}
+.status-step.done .status-step-label,.status-step.active .status-step-label{color:var(--black);font-weight:500;}
+.status-line{flex:1;height:2px;background:var(--border);margin-top:-14px;transition:background 0.3s;}
+.status-line.done{background:var(--green);}
+
+/* Animate */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp 0.2s ease both;}
+</style>
+</head>
+<body>
+
+<div class="phone-wrap">
+
+  <!-- Top bar — logo on every screen -->
+  <div class="top-bar">
+    <div class="top-logo">
+      <img src="logo.png" alt="FliteMate logo"/>
+      <div class="top-logo-name">FliteMate</div>
+    </div>
+    <div class="top-right">
+      <select class="lang-select" onchange="setLang(this.value)" id="lang-select-app">
+        <option value="en">🇬🇧 EN</option>
+        <option value="zh">🇨🇳 中文</option>
+        <option value="hi">🇮🇳 हिं</option>
+        <option value="vi">🇻🇳 VI</option>
+        <option value="ne">🇳🇵 NE</option>
+        <option value="id">🇮🇩 ID</option>
+        <option value="es">🇪🇸 ES</option>
+        <option value="pt">🇧🇷 PT</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="screens">
+
+    <!-- HOME -->
+    <div class="screen active" id="s-home">
+      <div class="home-hero">
+        <div class="home-greeting" id="h-greeting">Good morning, welcome back</div>
+        <div class="h1" style="color:white;" id="h-hero">Where are you headed?</div>
+        <div style="height:12px;"></div>
+        <div class="journey-card">
+          <div style="font-size:11px;opacity:0.7;margin-bottom:7px;font-family:var(--mono);">YOUR JOURNEY STATUS</div>
+          <div style="font-size:14px;font-weight:600;">Brisbane → Home</div>
+          <div class="journey-stages">
+            <div class="j-stage"><div class="j-dot done"></div><div class="j-label">Booked</div></div>
+            <div class="j-line done"></div>
+            <div class="j-stage"><div class="j-dot active"></div><div class="j-label">Packing</div></div>
+            <div class="j-line"></div>
+            <div class="j-stage"><div class="j-dot"></div><div class="j-label">Visa</div></div>
+            <div class="j-line"></div>
+            <div class="j-stage"><div class="j-dot"></div><div class="j-label">Airport</div></div>
+            <div class="j-line"></div>
+            <div class="j-stage"><div class="j-dot"></div><div class="j-label">Arrive</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-strip anim" onclick="switchTab('trips')">
+        <div class="alert-dot"></div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--green);" id="h-alert-title">Price drop alert</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:1px;" id="h-alert-body">BNE → Guangzhou from A$521 — 2 seats left</div>
+        </div>
+        <div style="font-size:18px;color:var(--green);">›</div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="qa-btn anim" onclick="switchTab('trips')">
+          <div class="qa-icon">✈️</div>
+          <div class="qa-label" id="h-qa1">Find flights</div>
+          <div class="qa-sub">True total cost</div>
+        </div>
+        <div class="qa-btn anim" onclick="switchTab('checklist')">
+          <div class="qa-icon">📋</div>
+          <div class="qa-label" id="h-qa2">Checklist</div>
+          <div class="qa-sub">Passport · Visa · Bags</div>
+        </div>
+        <div class="qa-btn anim" onclick="switchTab('airport')">
+          <div class="qa-icon">🛫</div>
+          <div class="qa-label" id="h-qa3">Airport guide</div>
+          <div class="qa-sub">Check-in to boarding</div>
+        </div>
+        <div class="qa-btn anim" onclick="switchTab('emergency')">
+          <div class="qa-icon">🆘</div>
+          <div class="qa-label" id="h-qa4">Emergency</div>
+          <div class="qa-sub">Flights + fund</div>
+        </div>
+      </div>
+
+      <div class="px" style="margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;" id="h-firsttime">First time flying from Australia?</div>
+        <div class="card" style="display:flex;gap:12px;align-items:center;cursor:pointer;" onclick="switchTab('airport')">
+          <div style="font-size:26px;">🌏</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;">New traveller guide</div>
+            <div class="small">Step by step — check-in to arrival</div>
+          </div>
+          <div style="margin-left:auto;color:var(--muted);">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLIGHTS -->
+    <div class="screen" id="s-trips">
+      <div style="padding-top:8px;"></div>
+      <div class="section">
+        <div class="h2">Find your flight</div>
+        <div class="small" style="margin-top:3px;">Real prices. No hidden fees. Student routes.</div>
+      </div>
+
+      <div class="search-box">
+        <div class="search-row">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20"/></svg>
+          <input type="text" value="Brisbane (BNE)" readonly style="font-weight:500;"/>
+        </div>
+        <div class="search-row">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <select id="dest-select" onchange="renderFlights()">
+            <option value="">Select destination...</option>
+            <optgroup label="Asia — Popular routes">
+              <option value="DEL">New Delhi (DEL) — India</option>
+              <option value="BOM">Mumbai (BOM) — India</option>
+              <option value="HYD">Hyderabad (HYD) — India</option>
+              <option value="CAN">Guangzhou (CAN) — China</option>
+              <option value="PEK">Beijing (PEK) — China</option>
+              <option value="PVG">Shanghai (PVG) — China</option>
+              <option value="KTM">Kathmandu (KTM) — Nepal</option>
+              <option value="HAN">Hanoi (HAN) — Vietnam</option>
+              <option value="SGN">Ho Chi Minh City (SGN) — Vietnam</option>
+              <option value="CGK">Jakarta (CGK) — Indonesia</option>
+              <option value="KUL">Kuala Lumpur (KUL) — Malaysia</option>
+              <option value="MNL">Manila (MNL) — Philippines</option>
+            </optgroup>
+            <optgroup label="Other regions">
+              <option value="LHR">London (LHR) — UK</option>
+              <option value="CDG">Paris (CDG) — France</option>
+              <option value="GRU">São Paulo (GRU) — Brazil</option>
+              <option value="JNB">Johannesburg (JNB) — South Africa</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="search-row">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <input type="date" id="date-input"/>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <button class="filter-chip on" onclick="toggleFilter(this,'studentVerified')">🎓 Student verified</button>
+        <button class="filter-chip on" onclick="toggleFilter(this,'bagsIncluded')">🧳 Bags included</button>
+        <button class="filter-chip" onclick="toggleFilter(this,'directOnly')">⚡ Fewest stops</button>
+        <button class="filter-chip" onclick="toggleFilter(this,'unsoldSeats')">🔥 Last-minute deals</button>
+        <button class="filter-chip" onclick="toggleFilter(this,'flexDates')">📅 Flexible dates</button>
+      </div>
+
+      <div class="result-label" id="result-label">SELECT A DESTINATION TO SEE FLIGHTS</div>
+      <div id="flight-results"></div>
+    </div>
+
+    <!-- CHECKLIST -->
+    <div class="screen" id="s-checklist">
+      <div class="checklist-header">
+        <div style="font-size:11px;opacity:0.6;font-family:var(--mono);margin-bottom:5px;">YOUR TRAVEL CHECKLIST</div>
+        <div class="h2" style="color:white;">Get ready to fly</div>
+        <div style="font-size:12px;opacity:0.6;margin-top:4px;">Tap each item as you complete it</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:25%;"></div></div>
+        <div style="font-size:11px;opacity:0.5;margin-top:5px;font-family:var(--mono);" id="progress-label">2 of 8 complete</div>
+      </div>
+
+      <div class="check-section">
+        <div class="check-section-label">Documents</div>
+        <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui done"></div><div><div class="check-main">Passport — valid 6+ months</div><div class="check-sub">Check expiry before you book</div></div></div>
+        <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui done"></div><div><div class="check-main">Student visa grant letter</div><div class="check-sub">Save to phone + print a copy</div></div></div>
+        <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Enrolment Confirmation (CoE)</div><div class="check-sub">Border may ask on return — have it ready</div></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="check-section">
+        <div class="check-section-label">Baggage</div>
+        <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Weigh checked bag — under limit</div><div class="check-sub">Check your airline's exact allowance before packing</div></div></div>
+        <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Carry-on under 7 kg</div><div class="check-sub">No liquids over 100ml in hand luggage</div></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="check-section">
+        <div class="check-section-label">Immigration — departing Australia</div>
+        <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Incoming passenger card ready</div><div class="check-sub">Declare ALL food, plant, animal items</div></div></div>
+        <div class="expand-trigger" onclick="toggleQuestions(this)">
+          <div class="check-box-ui"></div>
+          <div style="flex:1;"><div class="check-main">Know what you may be asked</div><div class="check-sub">Tap to see likely immigration questions ↓</div></div>
+          <div class="expand-arrow">▼</div>
+        </div>
+        <div class="expand-panel">
+          <div class="expand-panel-inner">
+            <div style="font-size:11px;font-weight:600;color:var(--blue);margin-bottom:8px;font-family:var(--mono);">COMMON IMMIGRATION QUESTIONS</div>
+            <div class="q-item"><div class="q-num">Q1</div><div><div class="q-text">What is the purpose of your travel?</div><div class="q-tip">Visiting family / personal travel</div></div></div>
+            <div class="q-item"><div class="q-num">Q2</div><div><div class="q-text">How long will you be away?</div><div class="q-tip">Have your return date and flight number ready</div></div></div>
+            <div class="q-item"><div class="q-num">Q3</div><div><div class="q-text">Do you have sufficient funds?</div><div class="q-tip">Know your approximate budget or card limit</div></div></div>
+            <div class="q-item"><div class="q-num">Q4</div><div><div class="q-text">Where will you be staying?</div><div class="q-tip">Home address or family contact name</div></div></div>
+            <div class="q-item"><div class="q-num">Q5</div><div><div class="q-text">Are you currently enrolled in study?</div><div class="q-tip">Have your CoE or student ID accessible</div></div></div>
+            <div class="q-item"><div class="q-num">Q6</div><div><div class="q-text">Do you intend to return to Australia?</div><div class="q-tip">Yes — your visa is valid and you're enrolled</div></div></div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Australian customs declaration</div><div class="check-sub">Use the ABF app to pre-declare — speeds up queue</div></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="check-section">
+        <div class="check-section-label">Official immigration documents</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Always check official government pages before you travel.</div>
+        <a class="doc-link" href="https://immi.homeaffairs.gov.au" target="_blank"><span style="font-size:16px;">🇦🇺</span><div><div class="doc-link-text">Australian Immigration (Home Affairs)</div><div class="doc-link-sub">immi.homeaffairs.gov.au</div></div></a>
+        <a class="doc-link" href="https://www.abf.gov.au/entering-and-leaving-australia/crossing-the-border" target="_blank"><span style="font-size:16px;">🛃</span><div><div class="doc-link-text">Australian Border Force</div><div class="doc-link-sub">abf.gov.au/crossing-the-border</div></div></a>
+        <a class="doc-link" href="https://www.india.gov.in/topics/passport-visa" target="_blank"><span style="font-size:16px;">🇮🇳</span><div><div class="doc-link-text">India — Passport & Visa</div><div class="doc-link-sub">india.gov.in</div></div></a>
+        <a class="doc-link" href="https://www.visaforchina.cn" target="_blank"><span style="font-size:16px;">🇨🇳</span><div><div class="doc-link-text">China Visa Service Center</div><div class="doc-link-sub">visaforchina.cn</div></div></a>
+        <a class="doc-link" href="https://www.immigration.gov.np" target="_blank"><span style="font-size:16px;">🇳🇵</span><div><div class="doc-link-text">Nepal Immigration</div><div class="doc-link-sub">immigration.gov.np</div></div></a>
+      </div>
+      <div style="padding:14px 20px;">
+        <div style="background:var(--blue-light);border-radius:12px;padding:11px 14px;margin-bottom:4px;">
+          <div style="font-size:12px;font-weight:600;color:var(--blue);">Est. immigration wait — BNE</div>
+          <div style="font-size:13px;color:var(--blue);margin-top:2px;">~12 min departures · ~25 min arrivals</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AIRPORT -->
+    <div class="screen" id="s-airport">
+      <div class="airport-hero">
+        <div style="font-size:11px;opacity:0.5;font-family:var(--mono);margin-bottom:7px;">AIRPORT GUIDE</div>
+        <div class="h1" style="color:white;">Step by step.</div>
+        <div style="font-size:13px;opacity:0.6;margin-top:7px;line-height:1.6;">Tap each stage to see what to expect.</div>
+      </div>
+      <div style="height:10px;"></div>
+
+      <div class="ag-step"><div class="ag-header" onclick="toggleStep(this)"><div class="ag-num">1</div><div><div class="ag-title">Check-in</div><div class="ag-sub-label">2–3 hrs before departure</div></div><div class="step-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🎫</div><div class="ag-tip-text"><strong>Online check-in</strong> opens 24–48h before — do it from your phone to pick your seat early.</div></div><div class="ag-tip"><div class="ag-tip-icon">🧳</div><div class="ag-tip-text"><strong>Bag drop</strong> is separate from check-in — follow airport signs. Have your booking reference ready.</div></div><div class="ag-tip"><div class="ag-tip-icon">⚖️</div><div class="ag-tip-text"><strong>Bag weight</strong> is checked at drop-off. Overweight fees can be A$20–$50 per kg — weigh at home first.</div></div></div></div></div>
+
+      <div class="ag-step"><div class="ag-header" onclick="toggleStep(this)"><div class="ag-num">2</div><div><div class="ag-title">Baggage drop</div><div class="ag-sub-label">After check-in</div></div><div class="step-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🏷️</div><div class="ag-tip-text"><strong>Bag tag</strong> is printed at check-in — attach it before joining the drop queue.</div></div><div class="ag-tip"><div class="ag-tip-icon">🔒</div><div class="ag-tip-text"><strong>Lock your bag</strong> with a TSA-approved lock — security can open it without breaking the lock.</div></div></div></div></div>
+
+      <div class="ag-step"><div class="ag-header" onclick="toggleStep(this)"><div class="ag-num">3</div><div><div class="ag-title">Security screening</div><div class="ag-sub-label">Allow 20–30 min</div></div><div class="step-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">💻</div><div class="ag-tip-text"><strong>Laptop and large electronics</strong> go in a separate tray — remove before the belt.</div></div><div class="ag-tip"><div class="ag-tip-icon">💧</div><div class="ag-tip-text"><strong>Liquids rule</strong> — max 100ml per container in one clear zip-lock bag. Buy water after security.</div></div><div class="ag-tip"><div class="ag-tip-icon">👟</div><div class="ag-tip-text"><strong>Shoes and belt</strong> — some airports ask you to remove these. Watch what people ahead of you do.</div></div></div></div></div>
+
+      <div class="ag-step"><div class="ag-header" onclick="toggleStep(this)"><div class="ag-num">4</div><div><div class="ag-title">Departure immigration</div><div class="ag-sub-label">BNE — SmartGate available</div></div><div class="step-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🛂</div><div class="ag-tip-text"><strong>SmartGate at BNE</strong> — use the automated lane if you have an e-passport. Much faster.</div></div><div class="ag-tip"><div class="ag-tip-icon">📄</div><div class="ag-tip-text"><strong>Have ready</strong> — passport, boarding pass, and student visa grant letter accessible on your phone.</div></div><div class="ag-tip"><div class="ag-tip-icon">😌</div><div class="ag-tip-text"><strong>Stay calm</strong> — questions are routine. See Checklist tab for what you may be asked.</div></div></div></div></div>
+
+      <div class="ag-step"><div class="ag-header" onclick="toggleStep(this)"><div class="ag-num">5</div><div><div class="ag-title">Transit / layover</div><div class="ag-sub-label">At your connecting airport</div></div><div class="step-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🔄</div><div class="ag-tip-text"><strong>Connection time</strong> — under 90 min is tight for international transfers. Ask staff if unsure.</div></div><div class="ag-tip"><div class="ag-tip-icon">🌿</div><div class="ag-tip-text"><strong>Changi (SIN) 4h+ layover?</strong> Butterfly garden, Jewel waterfall, free shower — all airside.</div></div><div class="ag-tip"><div class="ag-tip-icon">🍜</div><div class="ag-tip-text"><strong>Eat at the transit airport</strong> — often better and cheaper than on the plane.</div></div></div></div></div>
+
+      <div class="ag-step"><div class="ag-header" onclick="toggleStep(this)"><div class="ag-num">6</div><div><div class="ag-title">Boarding</div><div class="ag-sub-label">Gate closes 20–30 min early</div></div><div class="step-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🚪</div><div class="ag-tip-text"><strong>Gate closes early</strong> — be at the gate 45 min before departure time, not at departure.</div></div><div class="ag-tip"><div class="ag-tip-icon">🎒</div><div class="ag-tip-text"><strong>Overhead space</strong> fills fast — board early if you have a big carry-on bag.</div></div><div class="ag-tip"><div class="ag-tip-icon">📵</div><div class="ag-tip-text"><strong>Flight mode</strong> once doors close. Download movies and offline maps before boarding.</div></div></div></div></div>
+
+      <div class="ag-step" style="margin-bottom:14px;"><div class="ag-header" onclick="toggleStep(this)"><div class="ag-num">7</div><div><div class="ag-title">Arrival & customs</div><div class="ag-sub-label">At your home country</div></div><div class="step-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🛬</div><div class="ag-tip-text"><strong>Immigration first</strong> — follow signs to passport control before baggage claim.</div></div><div class="ag-tip"><div class="ag-tip-icon">🧳</div><div class="ag-tip-text"><strong>Baggage claim</strong> — check screens for your flight number and belt. Allow 20–40 min.</div></div><div class="ag-tip"><div class="ag-tip-icon">📝</div><div class="ag-tip-text"><strong>Customs declaration</strong> — declare electronics, cash over limit, and any food or plant items.</div></div><div class="ag-tip"><div class="ag-tip-icon">🚗</div><div class="ag-tip-text"><strong>Onward journey</strong> — pre-book your ride or arrange pickup before you land.</div></div></div></div></div>
+    </div>
+
+    <!-- EMERGENCY -->
+    <div class="screen" id="s-emergency">
+      <div class="emergency-hero">
+        <div style="font-size:11px;opacity:0.5;font-family:var(--mono);margin-bottom:7px;">EMERGENCY SUPPORT</div>
+        <div class="h1" style="color:white;">We've got you.</div>
+        <div style="font-size:13px;opacity:0.6;margin-top:7px;line-height:1.6;">For when life doesn't wait. Emergency fund + flexible flights.</div>
+      </div>
+
+      <div class="emergency-card" style="margin-top:14px;">
+        <div class="ec-header"><div class="ec-icon">💰</div><div><div class="ec-title">Emergency travel fund</div><div class="ec-sub">University co-funded · Semester opt-in · A$25/sem</div></div></div>
+        <div class="ec-body">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px;font-family:var(--mono);">POOL THIS SEMESTER<span>68% funded</span></div>
+          <div class="fund-bar-bg"><div class="fund-bar-fill"></div></div>
+          <div class="fund-meta"><span style="color:var(--green);font-weight:600;">A$14,280 available</span><span class="small">Max A$1,200 per application</span></div>
+          <div style="margin:12px 0 8px;">
+            <div style="font-size:11px;font-weight:600;color:var(--black);margin-bottom:7px;font-family:var(--mono);">APPLICATION STATUS</div>
+            <div class="status-track">
+              <div class="status-step active"><div class="status-step-dot">1</div><div class="status-step-label">Submitted</div></div>
+              <div class="status-line"></div>
+              <div class="status-step"><div class="status-step-dot">2</div><div class="status-step-label">In review</div></div>
+              <div class="status-line"></div>
+              <div class="status-step"><div class="status-step-dot">✓</div><div class="status-step-label">Approved</div></div>
+            </div>
+            <button onclick="advanceStatus()" id="status-btn" style="margin-top:6px;font-size:11px;padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:var(--display);color:var(--muted);">Simulate status update →</button>
+            <div id="status-approved" style="display:none;margin-top:8px;background:var(--green-light);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--green);font-weight:600;">✓ Credit approved — check your university email</div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;background:#f9f8f5;border-radius:10px;padding:10px 12px;margin-bottom:12px;">
+            <strong style="color:var(--black);display:block;margin-bottom:3px;">Not a loan — a shared safety net</strong>
+            Students contribute A$25/semester into a shared pool, co-matched by the university. Funds are grants for verified emergencies. No repayment required.
+          </div>
+          <button class="btn btn-amber">Apply for emergency credit</button>
+        </div>
+      </div>
+
+      <div class="emergency-card">
+        <div class="ec-header"><div class="ec-icon">✈️</div><div><div class="ec-title">Flexible emergency flights</div><div class="ec-sub">Last-minute availability · No change fees</div></div></div>
+        <div class="ec-body">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Scanning unsold seat inventory across 6+ airlines for last-minute availability at reduced rates.</div>
+          <div class="flight-card" style="margin:0 0 12px;padding:12px;">
+            <div class="fc-top" style="margin-bottom:8px;">
+              <div><div class="fc-airline" style="font-size:13px;">Singapore Airlines</div><div class="fc-route">BNE → SIN → destination · next 48h</div></div>
+              <div style="text-align:right;"><div class="fc-total" style="font-size:16px;color:var(--green);">A$498</div></div>
+            </div>
+            <div style="display:flex;gap:6px;"><span class="chip chip-green">3 seats left</span><span class="chip chip-gray">Bags incl.</span><span class="chip chip-amber">Emergency rate</span></div>
+          </div>
+          <div class="flight-card" style="margin:0;padding:12px;">
+            <div class="fc-top" style="margin-bottom:8px;">
+              <div><div class="fc-airline" style="font-size:13px;">China Southern</div><div class="fc-route">BNE → CAN → destination · next 72h</div></div>
+              <div style="text-align:right;"><div class="fc-total" style="font-size:16px;color:var(--green);">A$521</div></div>
+            </div>
+            <div style="display:flex;gap:6px;"><span class="chip chip-green">5 seats left</span><span class="chip chip-blue">🎓 Student fare</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <div class="bottom-nav">
+    <button class="nav-tab active" id="tab-home" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+    </button>
+    <button class="nav-tab" id="tab-trips" onclick="switchTab('trips')">
+      <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>Flights
+    </button>
+    <button class="nav-tab" id="tab-checklist" onclick="switchTab('checklist')">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Checklist
+    </button>
+    <button class="nav-tab" id="tab-airport" onclick="switchTab('airport')">
+      <svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19.5 2.5S18 2 16.5 3.5L13 7 4.8 5.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>Airport
+    </button>
+    <button class="nav-tab" id="tab-emergency" onclick="switchTab('emergency')">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.01 2.21 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>Emergency
+    </button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+// Restore language preference from landing page
+const savedLang = localStorage.getItem('fm_lang');
+if(savedLang){ document.getElementById('lang-select-app').value = savedLang; }
+</script>
+</body>
+</html>
