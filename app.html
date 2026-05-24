@@ -4,302 +4,301 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>FliteMate</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --cream: #f7f5f0;
-  --white: #ffffff;
-  --navy: #1a1a2e;
-  --blue: #2d5f8a;
-  --blue-light: #6aaedb;
-  --blue-wash: #e8f3fa;
-  --gold: #f5c842;
-  --gold-wash: #fdf8e3;
-  --green: #2d6a4f;
-  --green-wash: #edf7f2;
-  --amber: #e76f51;
-  --amber-wash: #fdf0ec;
-  --muted: #8a8a8a;
-  --border: #e8e4dc;
-  --border-dark: #c8c4bc;
-  --text: #1a1a2e;
-  --display: 'Bricolage Grotesque', sans-serif;
-  --mono: 'DM Mono', monospace;
-  --radius: 4px;
-  --radius-lg: 8px;
-  --radius-xl: 16px;
+:root{
+  --bg:#f5f3ee;--white:#fff;--black:#0f0f0f;
+  --navy:#1a1a2e;--blue:#2d5f8a;--blue-light:#6aaedb;--blue-wash:#e8f3fa;
+  --green:#2d6a4f;--green-light:#d8f3dc;--green-mid:#52b788;
+  --amber:#e76f51;--amber-light:#fde8df;
+  --gold:#f5c842;--gold-light:#fdf8e3;
+  --muted:#6b7280;--border:#e5e2da;--surface:#fffffe;
+  --display:'Bricolage Grotesque',sans-serif;--mono:'DM Mono',monospace;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { background: var(--cream); font-family: var(--display); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px 16px 40px; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);font-family:var(--display);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px;}
 
-/* ── Phone frame ── */
-.phone { width: 100%; max-width: 390px; background: var(--white); border-radius: 32px; overflow: hidden; box-shadow: 0 40px 100px rgba(26,26,46,0.12), 0 0 0 1px rgba(26,26,46,0.06); min-height: 820px; display: flex; flex-direction: column; }
+/* Phone */
+.phone-wrap{width:100%;max-width:390px;background:var(--white);border-radius:40px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.18),0 0 0 1px rgba(0,0,0,0.06);min-height:820px;display:flex;flex-direction:column;}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 24px 8px;font-family:var(--mono);font-size:12px;color:var(--muted);background:var(--white);flex-shrink:0;}
 
-/* ── Status bar ── */
-.status-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 6px; font-family: var(--mono); font-size: 11px; color: var(--muted); background: var(--white); flex-shrink: 0; }
+/* Top bar */
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:var(--white);border-bottom:1px solid var(--border);flex-shrink:0;}
+.top-logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none;}
+.top-logo img{width:28px;height:28px;object-fit:contain;}
+.top-logo-name{font-size:16px;font-weight:700;color:var(--navy);letter-spacing:-0.3px;}
+.lang-select{background:transparent;border:1px solid var(--border);border-radius:20px;padding:4px 20px 4px 8px;font-family:var(--mono);font-size:10px;color:var(--muted);cursor:pointer;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%236b7280'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;}
 
-/* ── Top bar ── */
-.top-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 10px; background: var(--white); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-.top-logo { display: flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; }
-.top-logo img { width: 26px; height: 26px; object-fit: contain; }
-.top-logo-name { font-size: 15px; font-weight: 700; color: var(--navy); letter-spacing: -0.4px; }
-.lang-select { background: transparent; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 20px 4px 8px; font-family: var(--mono); font-size: 10px; color: var(--muted); cursor: pointer; outline: none; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238a8a8a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 6px center; }
+/* Screens */
+.screens{flex:1;overflow:hidden;position:relative;}
+.screen{position:absolute;inset:0;overflow-y:auto;padding-bottom:80px;display:none;}
+.screen.active{display:block;}
+.screen::-webkit-scrollbar{display:none;}
 
-/* ── Screens ── */
-.screens { flex: 1; overflow: hidden; position: relative; }
-.screen { position: absolute; inset: 0; overflow-y: auto; padding-bottom: 80px; display: none; background: var(--white); }
-.screen.active { display: block; }
-.screen::-webkit-scrollbar { display: none; }
+/* Nav */
+.bottom-nav{display:flex;background:var(--white);border-top:1px solid var(--border);padding:8px 0 20px;flex-shrink:0;}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 2px;border:none;background:none;font-family:var(--display);font-size:9px;color:var(--muted);transition:color 0.15s;}
+.nav-tab.active{color:var(--green);}
+.nav-tab svg{width:20px;height:20px;stroke-width:1.8;stroke:currentColor;fill:none;}
+.nav-tab.active svg{stroke:var(--green);}
 
-/* ── Bottom nav ── */
-.bottom-nav { display: flex; background: var(--white); border-top: 1px solid var(--border); padding: 10px 0 22px; flex-shrink: 0; }
-.nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 2px; border: none; background: none; font-family: var(--mono); font-size: 9px; color: var(--muted); transition: color 0.15s; letter-spacing: 0.04em; text-transform: uppercase; }
-.nav-tab.active { color: var(--blue); }
-.nav-tab svg { width: 20px; height: 20px; stroke-width: 1.6; stroke: currentColor; fill: none; }
+/* Shared */
+.h1{font-size:26px;font-weight:700;letter-spacing:-0.5px;line-height:1.15;}
+.h2{font-size:18px;font-weight:600;letter-spacing:-0.2px;}
+.small{font-size:12px;color:var(--muted);}
+.px{padding:0 20px;}
+.section{padding:16px 20px;}
+.divider{height:1px;background:var(--border);margin:0 20px;}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;}
+.chip-green{background:var(--green-light);color:var(--green);}
+.chip-amber{background:var(--amber-light);color:var(--amber);}
+.chip-blue{background:var(--blue-wash);color:var(--blue);}
+.chip-gray{background:#f3f4f6;color:var(--muted);}
+.chip-gold{background:var(--gold-light);color:#856f00;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:14px;font-family:var(--display);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:transform 0.1s,opacity 0.1s;width:100%;}
+.btn:active{transform:scale(0.97);}
+.btn-navy{background:var(--navy);color:white;}
+.btn-green{background:var(--green);color:white;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--black);}
+.btn-amber{background:var(--amber);color:white;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;}
 
 /* ── HOME ── */
-.home-hero { background: var(--navy); padding: 28px 20px 24px; }
-.home-greeting { font-size: 12px; color: rgba(255,255,255,0.5); font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
-.home-title { font-size: 30px; font-weight: 700; color: var(--white); letter-spacing: -0.8px; line-height: 1.1; margin-bottom: 20px; }
-.journey-tracker { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 14px 16px; }
-.journey-tracker-label { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
-.journey-route { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 12px; }
-.j-stages { display: flex; align-items: center; }
-.j-stage { flex: 1; text-align: center; }
-.j-dot { width: 8px; height: 8px; border-radius: 50%; margin: 0 auto 5px; background: rgba(255,255,255,0.2); transition: all 0.3s; }
-.j-dot.done { background: var(--gold); }
-.j-dot.active { background: var(--white); box-shadow: 0 0 0 3px rgba(255,255,255,0.2); }
-.j-line { flex: 1; height: 1px; background: rgba(255,255,255,0.15); position: relative; top: -9px; }
-.j-line.done { background: var(--gold); }
-.j-label { font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.04em; }
+.home-hero{background:var(--navy);padding:24px 20px 26px;}
+.home-greeting{font-size:12px;color:rgba(255,255,255,0.5);font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;}
+.home-title{font-size:28px;font-weight:700;color:white;letter-spacing:-0.5px;line-height:1.15;margin-bottom:18px;}
+.journey-card{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:14px 16px;}
+.j-label-row{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;}
+.j-route{font-size:13px;font-weight:600;color:white;margin-bottom:12px;}
+.j-stages{display:flex;align-items:center;}
+.j-stage{flex:1;text-align:center;}
+.j-dot{width:9px;height:9px;border-radius:50%;margin:0 auto 4px;background:rgba(255,255,255,0.25);transition:all 0.3s;}
+.j-dot.done{background:var(--gold);}
+.j-dot.active{background:white;box-shadow:0 0 0 3px rgba(255,255,255,0.25);}
+.j-line{flex:1;height:1px;background:rgba(255,255,255,0.15);position:relative;top:-8px;}
+.j-line.done{background:var(--gold);}
+.j-lbl{font-family:var(--mono);font-size:8px;color:rgba(255,255,255,0.4);text-transform:uppercase;}
 
-/* Alert banner */
-.alert-banner { margin: 16px 16px 0; background: var(--gold-wash); border: 1px solid rgba(245,200,66,0.3); border-radius: var(--radius-lg); padding: 12px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.alert-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; animation: blink 2s infinite; }
-@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.4} }
-.alert-text { flex: 1; }
-.alert-title { font-size: 12px; font-weight: 600; color: var(--navy); }
-.alert-body { font-size: 11px; color: var(--muted); margin-top: 1px; }
-.alert-arrow { font-size: 16px; color: var(--muted); }
+.alert-strip{margin:14px 20px 0;background:var(--gold-light);border:1px solid rgba(245,200,66,0.35);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.alert-pulse{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,0.5)}50%{box-shadow:0 0 0 6px rgba(245,200,66,0)}}
 
-/* Quick actions */
-.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); margin: 16px 16px 0; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); }
-.quick-tile { background: var(--white); padding: 16px 14px; cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 6px; }
-.quick-tile:hover { background: var(--cream); }
-.qt-label { font-size: 13px; font-weight: 600; color: var(--navy); }
-.qt-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); }
-.qt-num { font-size: 22px; font-weight: 700; color: var(--blue-light); line-height: 1; }
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px;}
+.qa-btn{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;transition:all 0.15s;text-align:left;display:flex;flex-direction:column;gap:6px;}
+.qa-btn:hover{border-color:var(--green);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.06);}
+.qa-icon{font-size:20px;}
+.qa-label{font-size:13px;font-weight:600;color:var(--black);}
+.qa-sub{font-size:11px;color:var(--muted);}
 
-/* First time flying */
-.first-time-section { margin: 16px 16px 0; }
-.section-eyebrow { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
-.first-time-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.15s; }
-.first-time-card:hover { border-color: var(--blue-light); }
-.ftc-text { flex: 1; }
-.ftc-title { font-size: 14px; font-weight: 600; color: var(--navy); }
-.ftc-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.ftc-arrow { font-size: 18px; color: var(--border-dark); }
+.first-time-wrap{padding:0 20px 16px;}
+.section-eyebrow{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+.first-time-card{border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s;}
+.first-time-card:hover{border-color:var(--blue-light);}
 
 /* ── FLIGHTS ── */
-.flights-header { padding: 20px 20px 0; }
-.screen-title { font-size: 24px; font-weight: 700; color: var(--navy); letter-spacing: -0.5px; }
-.screen-sub { font-size: 12px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+.flights-header{padding:18px 20px 0;}
+.search-panel{margin:14px 20px;border:1.5px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface);}
+.search-row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);}
+.search-row:last-child{border-bottom:none;}
+.search-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;width:28px;flex-shrink:0;}
+.search-row input,.search-row select{border:none;outline:none;font-family:var(--display);font-size:14px;background:transparent;flex:1;color:var(--black);font-weight:500;-webkit-appearance:none;appearance:none;}
+.search-row input::placeholder{color:var(--muted);font-weight:400;}
 
-.search-panel { margin: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-.search-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--white); }
-.search-row:last-child { border-bottom: none; }
-.search-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; width: 28px; flex-shrink: 0; }
-.search-row input, .search-row select { border: none; outline: none; font-family: var(--display); font-size: 14px; background: transparent; flex: 1; color: var(--navy); font-weight: 500; -webkit-appearance: none; appearance: none; }
-.search-row input::placeholder, .search-row select::placeholder { color: var(--muted); font-weight: 400; }
-.search-row select option[value=""] { color: var(--muted); }
+.filter-row{display:flex;gap:8px;padding:0 20px 14px;overflow-x:auto;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{flex-shrink:0;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:var(--display);transition:all 0.15s;}
+.filter-chip.on{background:var(--navy);color:white;border-color:var(--navy);}
 
-.filter-strip { display: flex; gap: 6px; padding: 0 16px 14px; overflow-x: auto; }
-.filter-strip::-webkit-scrollbar { display: none; }
-.filter-pill { flex-shrink: 0; padding: 5px 11px; border-radius: 2px; font-size: 11px; font-weight: 500; cursor: pointer; background: var(--white); border: 1px solid var(--border); color: var(--muted); font-family: var(--mono); transition: all 0.15s; letter-spacing: 0.02em; }
-.filter-pill.on { background: var(--navy); color: var(--white); border-color: var(--navy); }
-
-.result-eyebrow { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; padding: 0 16px 10px; text-transform: uppercase; }
+.result-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;padding:0 20px 10px;text-transform:uppercase;}
 
 /* Flight card */
-.f-card { margin: 0 16px 8px; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: all 0.15s; }
-.f-card:hover { border-color: var(--blue-light); box-shadow: 0 4px 20px rgba(45,95,138,0.08); }
-.f-card.best { border-color: var(--blue); }
-.f-card.warn { border-color: rgba(231,111,81,0.4); }
-.f-card.deal { border-color: rgba(106,174,219,0.5); }
-.f-tag { font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: 0.06em; padding: 5px 12px; text-transform: uppercase; }
-.f-tag.best { background: var(--navy); color: var(--white); }
-.f-tag.warn { background: var(--amber-wash); color: var(--amber); }
-.f-tag.deal { background: var(--blue-wash); color: var(--blue); }
-.f-tag.normal { display: none; }
-.f-body { padding: 12px 14px; }
-.f-airline { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
-.f-route { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-bottom: 10px; }
-.f-student-note { display: inline-block; font-size: 10px; color: var(--blue); background: var(--blue-wash); padding: 2px 8px; border-radius: 2px; margin-bottom: 10px; font-family: var(--mono); }
-.f-price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
-.f-total { font-size: 26px; font-weight: 700; color: var(--navy); letter-spacing: -0.5px; }
-.f-total.best { color: var(--blue); }
-.f-total.warn { color: var(--amber); }
-.f-true-label { font-family: var(--mono); font-size: 10px; color: var(--muted); }
-.f-breakdown { display: grid; grid-template-columns: repeat(5,1fr); gap: 1px; background: var(--border); border-radius: var(--radius); overflow: hidden; }
-.f-item { background: var(--cream); padding: 8px 4px; text-align: center; }
-.f-item-val { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--navy); }
-.f-item-val.bags-good { color: var(--green); }
-.f-item-val.bags-bad { color: var(--amber); }
-.f-item-lbl { font-family: var(--mono); font-size: 9px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+.flight-card{margin:0 20px 10px;border-radius:18px;overflow:hidden;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);}
+.flight-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.08);}
+.flight-card.best{border-color:var(--green);}
+.flight-card.warn{border-color:var(--amber);}
+.flight-card.deal{border-color:var(--blue-light);}
+.fc-ribbon{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.05em;padding:6px 14px;text-transform:uppercase;}
+.fc-ribbon.best{background:var(--green);color:white;}
+.fc-ribbon.warn{background:var(--amber-light);color:var(--amber);}
+.fc-ribbon.deal{background:var(--blue-wash);color:var(--blue);}
+.fc-body{padding:14px;}
+.fc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.fc-airline{font-size:14px;font-weight:600;color:var(--black);}
+.fc-route{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--mono);}
+.fc-total{font-size:24px;font-weight:700;letter-spacing:-0.5px;}
+.fc-total.green{color:var(--green);}
+.fc-total.amber{color:var(--amber);}
+.fc-total.muted{color:var(--muted);}
+.fc-note{font-size:10px;color:var(--muted);}
+.fc-student-note{font-size:10px;color:var(--blue);background:var(--blue-wash);padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:8px;font-family:var(--mono);}
+.fc-breakdown{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;margin-top:8px;}
+.fc-item{background:#f9f8f5;padding:8px 4px;text-align:center;}
+.fc-item-val{font-size:11px;font-weight:600;font-family:var(--mono);}
+.fc-item-val.g{color:var(--green);}
+.fc-item-val.a{color:var(--amber);}
+.fc-item-lbl{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;font-family:var(--mono);}
+.fc-book-btn{margin:10px 14px 14px;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--navy);color:white;border:none;border-radius:12px;padding:11px;font-family:var(--display);font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.15s;width:calc(100% - 28px);}
+.fc-book-btn:hover{opacity:0.88;}
+
+/* ── CHECKOUT SCREEN ── */
+.checkout-hero{background:var(--navy);padding:22px 20px 20px;}
+.checkout-back{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.6);font-size:13px;cursor:pointer;margin-bottom:14px;border:none;background:none;font-family:var(--display);}
+.checkout-back:hover{color:white;}
+.checkout-title{font-size:22px;font-weight:700;color:white;letter-spacing:-0.3px;}
+.checkout-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;font-family:var(--mono);}
+
+.co-section{padding:16px 20px;}
+.co-label{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
+.co-summary{background:var(--green-light);border:1px solid rgba(45,106,79,0.2);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
+.co-flight-name{font-size:15px;font-weight:700;color:var(--black);margin-bottom:4px;}
+.co-flight-route{font-size:12px;color:var(--muted);font-family:var(--mono);}
+.co-price-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;padding-top:10px;border-top:1px solid rgba(45,106,79,0.2);}
+.co-price-label{font-size:13px;color:var(--muted);}
+.co-price-total{font-size:24px;font-weight:700;color:var(--green);letter-spacing:-0.5px;}
+
+.co-field{border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;transition:border-color 0.15s;}
+.co-field:focus-within{border-color:var(--blue-light);}
+.co-field-label{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+.co-field input,.co-field select{border:none;outline:none;font-family:var(--display);font-size:14px;color:var(--black);background:transparent;width:100%;-webkit-appearance:none;appearance:none;}
+.co-field input::placeholder{color:var(--muted);}
+.co-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.co-breakdown{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.co-breakdown-row{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;}
+.co-breakdown-row:last-child{border-bottom:none;font-weight:600;}
+.co-breakdown-label{color:var(--muted);}
+.co-breakdown-val{color:var(--black);font-family:var(--mono);}
+.co-breakdown-row.total .co-breakdown-val{color:var(--green);font-size:16px;}
+
+.co-guarantee{background:var(--blue-wash);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+.co-guarantee-icon{font-size:18px;flex-shrink:0;}
+.co-guarantee-text{font-size:12px;color:var(--blue);line-height:1.5;}
+
+.confirm-overlay{position:absolute;inset:0;background:rgba(26,26,46,0.7);display:flex;align-items:center;justify-content:center;z-index:50;display:none;}
+.confirm-sheet{background:white;border-radius:24px;padding:28px 24px;margin:20px;text-align:center;}
+.confirm-icon{font-size:48px;margin-bottom:12px;}
+.confirm-title{font-size:20px;font-weight:700;color:var(--black);margin-bottom:6px;}
+.confirm-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.confirm-ref{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--green);background:var(--green-light);padding:8px 16px;border-radius:8px;display:inline-block;margin-bottom:20px;}
 
 /* ── CHECKLIST ── */
-.checklist-hero { background: var(--navy); padding: 24px 20px 20px; }
-.checklist-hero-title { font-size: 26px; font-weight: 700; color: var(--white); letter-spacing: -0.5px; margin-bottom: 4px; }
-.checklist-hero-sub { font-size: 12px; color: rgba(255,255,255,0.4); font-family: var(--mono); letter-spacing: 0.04em; }
-.progress-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
-.progress-track { flex: 1; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
-.progress-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.4s ease; width: 25%; }
-.progress-label { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.4); white-space: nowrap; }
+.checklist-header{background:var(--navy);padding:20px 20px 22px;}
+.progress-bar{background:rgba(255,255,255,0.2);border-radius:4px;height:5px;margin-top:12px;overflow:hidden;}
+.progress-fill{background:var(--gold);height:100%;border-radius:4px;transition:width 0.4s ease;}
 
-/* Destination quick-ref */
-.dest-ref { margin: 16px 16px 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-.dest-ref-header { padding: 12px 14px; background: var(--blue-wash); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-.dest-ref-title { font-family: var(--mono); font-size: 10px; color: var(--blue); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
-.dest-ref-toggle { font-size: 12px; color: var(--blue); }
-.dest-ref-body { display: none; padding: 10px 14px; }
-.dest-ref-body.open { display: block; }
-.dest-group { margin-bottom: 10px; }
-.dest-group-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
-.dest-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-.dest-tag { font-size: 11px; background: var(--cream); border: 1px solid var(--border); border-radius: 2px; padding: 3px 8px; color: var(--navy); font-family: var(--mono); cursor: pointer; transition: all 0.15s; }
-.dest-tag:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.check-section{padding:12px 20px 8px;}
+.check-section-label{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;}
+.check-item:hover{background:#fafaf8;}
+.check-item:last-child{border-bottom:none;}
+.check-box-ui{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;background:white;}
+.check-box-ui.done{background:var(--green);border-color:var(--green);}
+.check-box-ui.done::after{content:'';display:block;width:6px;height:10px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px);}
+.check-main{font-size:14px;font-weight:500;color:var(--black);}
+.check-sub{font-size:12px;color:var(--muted);margin-top:2px;}
 
-/* Check items */
-.check-group { border-bottom: 1px solid var(--border); }
-.check-group-header { padding: 12px 16px 8px; }
-.check-group-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.check-row { display: flex; align-items: flex-start; gap: 12px; padding: 11px 16px; border-top: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
-.check-row:hover { background: var(--cream); }
-.check-box { width: 20px; height: 20px; border-radius: 4px; border: 1.5px solid var(--border-dark); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 1px; }
-.check-box.done { background: var(--blue); border-color: var(--blue); }
-.check-box.done::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translate(-1px,-1px); }
-.check-main { font-size: 14px; font-weight: 500; color: var(--navy); }
-.check-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.expand-trigger{display:flex;align-items:flex-start;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;}
+.expand-trigger:hover{background:#fafaf8;}
+.expand-arrow{margin-left:auto;font-size:13px;color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-top:3px;}
+.expand-panel{max-height:0;overflow:hidden;opacity:0;transition:max-height 0.3s ease,opacity 0.3s ease;}
+.expand-panel-inner{background:var(--blue-wash);border-radius:12px;margin:0 20px 10px;padding:12px 14px;}
+.q-item{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(45,95,138,0.1);font-size:12px;}
+.q-item:last-child{border-bottom:none;}
+.q-num{font-family:var(--mono);font-size:10px;color:var(--blue);font-weight:600;width:22px;flex-shrink:0;}
+.q-text{color:var(--navy);line-height:1.5;}
+.q-tip{font-size:11px;color:var(--blue);margin-top:2px;font-family:var(--mono);}
 
-/* Expand */
-.expand-row { display: flex; align-items: flex-start; gap: 12px; padding: 11px 16px; border-top: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
-.expand-row:hover { background: var(--cream); }
-.expand-arrow { margin-left: auto; font-size: 12px; color: var(--muted); transition: transform 0.25s; flex-shrink: 0; margin-top: 3px; }
-.expand-panel { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.3s ease, opacity 0.3s ease; }
-.expand-inner { margin: 0 16px 10px; background: var(--blue-wash); border-radius: var(--radius-lg); padding: 14px; }
-.q-item { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(45,95,138,0.1); font-size: 12px; }
-.q-item:last-child { border-bottom: none; }
-.q-num { font-family: var(--mono); font-size: 10px; color: var(--blue); font-weight: 500; width: 22px; flex-shrink: 0; }
-.q-text { color: var(--navy); line-height: 1.5; }
-.q-tip { font-size: 11px; color: var(--blue); margin-top: 2px; font-family: var(--mono); }
+/* Dest reference */
+.dest-ref{margin:14px 20px 0;border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.dest-ref-head{padding:12px 14px;background:var(--blue-wash);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+.dest-ref-title{font-family:var(--mono);font-size:10px;color:var(--blue);text-transform:uppercase;letter-spacing:0.06em;font-weight:500;}
+.dest-ref-body{display:none;padding:12px 14px;}
+.dest-ref-body.open{display:block;}
+.dest-group{margin-bottom:10px;}
+.dest-group-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
+.dest-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.dest-tag{font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--navy);font-family:var(--mono);cursor:pointer;transition:all 0.15s;}
+.dest-tag:hover{background:var(--navy);color:white;border-color:var(--navy);}
 
 /* Doc links */
-.doc-link { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-top: 1px solid var(--border); text-decoration: none; transition: background 0.1s; }
-.doc-link:hover { background: var(--cream); }
-.doc-flag { font-size: 18px; flex-shrink: 0; }
-.doc-name { font-size: 13px; font-weight: 500; color: var(--blue); }
-.doc-url { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; }
-.doc-arrow { margin-left: auto; font-size: 16px; color: var(--border-dark); }
+.doc-link{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1px solid var(--border);text-decoration:none;transition:background 0.1s;}
+.doc-link:hover{background:#fafaf8;}
+.doc-link:last-child{border-bottom:none;}
+.doc-name{font-size:13px;font-weight:500;color:var(--blue);}
+.doc-url{font-size:11px;color:var(--muted);margin-top:1px;font-family:var(--mono);}
+.doc-arrow{margin-left:auto;font-size:16px;color:var(--border);}
 
-/* Wait info */
-.wait-strip { margin: 0 16px 16px; background: var(--blue-wash); border-radius: var(--radius-lg); padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
-.wait-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
-.wait-text { font-size: 12px; color: var(--blue); font-family: var(--mono); }
+.wait-strip{margin:8px 20px 16px;background:var(--blue-wash);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:8px;}
+.wait-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;}
+.wait-text{font-size:12px;color:var(--blue);font-family:var(--mono);}
 
 /* ── AIRPORT ── */
-.airport-hero { background: linear-gradient(160deg, var(--navy) 0%, #162840 100%); padding: 24px 20px 20px; }
-.airport-hero-title { font-size: 28px; font-weight: 700; color: var(--white); letter-spacing: -0.6px; margin-bottom: 4px; }
-.airport-hero-sub { font-size: 12px; color: rgba(255,255,255,0.4); font-family: var(--mono); letter-spacing: 0.04em; }
-
-.ag-step { margin: 0 16px 6px; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-.ag-head { display: flex; align-items: center; gap: 12px; padding: 14px; cursor: pointer; background: var(--white); transition: background 0.15s; }
-.ag-head:hover { background: var(--cream); }
-.ag-num { width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: var(--white); font-family: var(--mono); font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.ag-head-text { flex: 1; }
-.ag-title { font-size: 14px; font-weight: 600; color: var(--navy); }
-.ag-when { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; }
-.ag-chevron { font-size: 12px; color: var(--muted); transition: transform 0.25s; }
-.ag-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; background: var(--cream); border-top: 0 solid var(--border); }
-.ag-body.open { border-top-width: 1px; }
-.ag-body-inner { padding: 14px; }
-.ag-tip { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; line-height: 1.5; }
-.ag-tip:last-child { border-bottom: none; }
-.ag-tip-label { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--blue); width: 70px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.04em; padding-top: 1px; }
-.ag-tip-text { color: var(--muted); flex: 1; }
-.ag-tip-text strong { color: var(--navy); }
+.airport-hero{background:linear-gradient(135deg,var(--navy) 0%,#0d2137 100%);padding:22px 20px 20px;}
+.ag-step{margin:0 20px 8px;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.ag-head{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;background:var(--surface);transition:background 0.15s;}
+.ag-head:hover{background:var(--bg);}
+.ag-num{width:28px;height:28px;border-radius:50%;background:var(--navy);color:white;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ag-title{font-size:14px;font-weight:600;flex:1;color:var(--black);}
+.ag-when{font-size:11px;color:var(--muted);font-family:var(--mono);}
+.ag-arrow{font-size:13px;color:var(--muted);transition:transform 0.25s;}
+.ag-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease;background:var(--bg);}
+.ag-body.open{border-top:1px solid var(--border);}
+.ag-body-inner{padding:14px;}
+.ag-tip{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.5;}
+.ag-tip:last-child{border-bottom:none;}
+.ag-tip-icon{font-size:14px;flex-shrink:0;}
+.ag-tip-text{color:var(--muted);}
+.ag-tip-text strong{color:var(--black);}
 
 /* ── EMERGENCY ── */
-.emergency-hero { background: var(--navy); padding: 24px 20px 20px; }
-.emergency-hero-title { font-size: 28px; font-weight: 700; color: var(--white); letter-spacing: -0.6px; }
-.emergency-hero-sub { font-size: 12px; color: rgba(255,255,255,0.4); font-family: var(--mono); margin-top: 4px; }
+.emergency-hero{background:linear-gradient(135deg,var(--navy) 0%,#2d1b1b 100%);padding:22px 20px 20px;}
+.e-card{margin:14px 20px 0;border:1.5px solid var(--border);border-radius:18px;overflow:hidden;}
+.e-card-head{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);background:var(--bg);}
+.e-card-title{font-size:14px;font-weight:600;color:var(--black);}
+.e-card-sub{font-size:12px;color:var(--muted);margin-top:2px;font-family:var(--mono);}
+.e-card-body{padding:14px 16px;}
+.fund-bar-bg{background:var(--border);border-radius:4px;height:8px;overflow:hidden;margin-bottom:6px;}
+.fund-bar-fill{background:var(--blue);height:100%;border-radius:4px;width:68%;}
+.fund-meta{display:flex;justify-content:space-between;font-size:11px;}
+.status-track{display:flex;align-items:center;margin:12px 0;}
+.s-step{flex:1;text-align:center;}
+.s-dot{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);background:white;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--muted);transition:all 0.3s;}
+.s-step.done .s-dot{background:var(--green);border-color:var(--green);color:white;}
+.s-step.active .s-dot{background:var(--navy);border-color:var(--navy);color:white;box-shadow:0 0 0 3px rgba(26,26,46,0.12);}
+.s-label{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;}
+.s-step.done .s-label,.s-step.active .s-label{color:var(--black);font-weight:500;}
+.s-line{flex:1;height:1.5px;background:var(--border);margin-top:-13px;transition:background 0.3s;}
+.s-line.done{background:var(--green);}
+.not-loan{background:var(--bg);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--muted);line-height:1.6;}
+.not-loan strong{color:var(--black);display:block;margin-bottom:2px;}
+.sim-btn{font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:white;cursor:pointer;font-family:var(--mono);color:var(--muted);transition:all 0.15s;margin-bottom:10px;}
+.sim-btn:hover{border-color:var(--green);color:var(--green);}
+.approved-msg{display:none;background:var(--green-light);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--green);font-weight:600;margin-bottom:10px;font-family:var(--mono);}
 
-.e-card { margin: 14px 16px 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-.e-card-head { padding: 14px; display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid var(--border); background: var(--cream); }
-.e-card-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-.e-card-title { font-size: 14px; font-weight: 600; color: var(--navy); }
-.e-card-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
-.e-card-body { padding: 14px; background: var(--white); }
-
-.fund-bar-wrap { margin-bottom: 12px; }
-.fund-bar-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-.fund-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.fund-fill { height: 100%; background: var(--blue); border-radius: 2px; width: 68%; }
-.fund-stats { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; }
-.fund-avail { color: var(--blue); font-weight: 600; }
-.fund-max { color: var(--muted); font-family: var(--mono); font-size: 11px; }
-
-/* Status tracker */
-.status-track { display: flex; align-items: center; margin: 14px 0 12px; }
-.s-step { flex: 1; text-align: center; }
-.s-dot { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-dark); background: var(--white); margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; color: var(--muted); transition: all 0.3s; }
-.s-step.done .s-dot { background: var(--blue); border-color: var(--blue); color: var(--white); }
-.s-step.active .s-dot { background: var(--navy); border-color: var(--navy); color: var(--white); box-shadow: 0 0 0 3px rgba(26,26,46,0.12); }
-.s-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-.s-step.done .s-label, .s-step.active .s-label { color: var(--navy); font-weight: 500; }
-.s-line { flex: 1; height: 1.5px; background: var(--border); margin-top: -14px; transition: background 0.3s; }
-.s-line.done { background: var(--blue); }
-
-.not-loan-note { background: var(--cream); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; }
-.not-loan-title { font-size: 11px; font-weight: 600; color: var(--navy); margin-bottom: 3px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.04em; }
-.not-loan-body { font-size: 12px; color: var(--muted); line-height: 1.6; }
-
-.sim-btn { font-size: 11px; padding: 6px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--white); cursor: pointer; font-family: var(--mono); color: var(--muted); transition: all 0.15s; margin-bottom: 10px; }
-.sim-btn:hover { border-color: var(--blue); color: var(--blue); }
-.approved-msg { display: none; background: var(--green-wash); border-radius: var(--radius); padding: 10px 12px; font-size: 12px; color: var(--green); font-weight: 600; margin-bottom: 10px; font-family: var(--mono); }
-
-.btn-navy { width: 100%; padding: 13px 20px; border-radius: var(--radius); background: var(--navy); color: var(--white); font-family: var(--display); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.15s; letter-spacing: -0.2px; }
-.btn-navy:hover { opacity: 0.88; }
-.btn-navy:active { transform: scale(0.98); }
-.btn-outline { width: 100%; padding: 12px 20px; border-radius: var(--radius); background: transparent; border: 1px solid var(--border-dark); color: var(--navy); font-family: var(--display); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; letter-spacing: -0.2px; }
-.btn-outline:hover { border-color: var(--navy); }
-
-/* Emergency flight cards */
-.e-flight { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; margin-bottom: 8px; }
-.e-flight:last-child { margin-bottom: 0; }
-.e-flight-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
-.e-flight-airline { font-size: 13px; font-weight: 600; color: var(--navy); }
-.e-flight-route { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; }
-.e-flight-price { font-size: 20px; font-weight: 700; color: var(--blue); letter-spacing: -0.3px; }
-.e-flight-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-.e-tag { font-family: var(--mono); font-size: 9px; padding: 3px 7px; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
-.e-tag-green { background: var(--green-wash); color: var(--green); }
-.e-tag-blue { background: var(--blue-wash); color: var(--blue); }
-.e-tag-gold { background: var(--gold-wash); color: #8a6800; }
+.e-flight{border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;}
+.e-flight:last-child{margin-bottom:0;}
+.e-flight-top{display:flex;justify-content:space-between;margin-bottom:8px;}
+.e-flight-airline{font-size:13px;font-weight:600;color:var(--black);}
+.e-flight-route{font-size:11px;color:var(--muted);font-family:var(--mono);}
+.e-flight-price{font-size:20px;font-weight:700;color:var(--blue);}
+.e-tags{display:flex;gap:5px;flex-wrap:wrap;}
 
 /* Animate */
-@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.anim { animation: fadeUp 0.2s ease both; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp 0.2s ease both;}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+.scale-in{animation:scaleIn 0.25s ease both;}
 </style>
 </head>
 <body>
 
-<div class="phone">
+<div class="phone-wrap">
   <div class="status-bar">
-    <span>9:41</span>
+    <span style="font-family:var(--mono)">9:41</span>
     <span id="status-time"></span>
   </div>
 
-  <!-- Top bar — logo on every screen -->
+  <!-- Top bar -->
   <div class="top-bar">
     <a href="index.html" class="top-logo">
       <img src="logo.png" alt="FliteMate"/>
@@ -333,64 +332,65 @@ body { background: var(--cream); font-family: var(--display); min-height: 100vh;
     <div class="screen active" id="s-home">
       <div class="home-hero">
         <div class="home-greeting" id="h-greeting">GOOD MORNING</div>
-        <div class="home-title" id="h-hero">Where are<br>you headed?</div>
-        <div class="journey-tracker">
-          <div class="journey-tracker-label">Journey status</div>
-          <div class="journey-route" id="h-route">Brisbane (BNE) → Home</div>
+        <div class="home-title" id="h-hero">Where are you headed?</div>
+        <div class="journey-card">
+          <div class="j-label-row">Your journey status</div>
+          <div class="j-route" id="h-route">Brisbane (BNE) → Home</div>
           <div class="j-stages">
-            <div class="j-stage"><div class="j-dot done"></div><div class="j-label">Booked</div></div>
+            <div class="j-stage"><div class="j-dot done"></div><div class="j-lbl">Booked</div></div>
             <div class="j-line done"></div>
-            <div class="j-stage"><div class="j-dot active"></div><div class="j-label">Packing</div></div>
+            <div class="j-stage"><div class="j-dot active"></div><div class="j-lbl">Packing</div></div>
             <div class="j-line"></div>
-            <div class="j-stage"><div class="j-dot"></div><div class="j-label">Visa</div></div>
+            <div class="j-stage"><div class="j-dot"></div><div class="j-lbl">Visa</div></div>
             <div class="j-line"></div>
-            <div class="j-stage"><div class="j-dot"></div><div class="j-label">Airport</div></div>
+            <div class="j-stage"><div class="j-dot"></div><div class="j-lbl">Airport</div></div>
             <div class="j-line"></div>
-            <div class="j-stage"><div class="j-dot"></div><div class="j-label">Arrive</div></div>
+            <div class="j-stage"><div class="j-dot"></div><div class="j-lbl">Arrive</div></div>
           </div>
         </div>
       </div>
 
-      <div class="alert-banner" onclick="switchTab('trips')">
-        <div class="alert-dot"></div>
-        <div class="alert-text">
-          <div class="alert-title" id="h-alert-title">Price drop alert</div>
-          <div class="alert-body" id="h-alert-body">BNE → Guangzhou from A$521 — 2 seats left</div>
+      <div class="alert-strip anim" onclick="switchTab('trips')">
+        <div class="alert-pulse"></div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:#856f00;" id="h-alert-title">Price drop alert</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:1px;" id="h-alert-body">BNE → Guangzhou from A$521 — 2 seats left</div>
         </div>
-        <div class="alert-arrow">›</div>
+        <div style="font-size:18px;color:var(--muted);">›</div>
       </div>
 
-      <div class="quick-grid">
-        <div class="quick-tile" onclick="switchTab('trips')">
-          <div class="qt-num">✈</div>
-          <div class="qt-label" id="h-qa1">Find flights</div>
-          <div class="qt-sub">True total cost</div>
+      <div class="quick-actions">
+        <div class="qa-btn anim" onclick="switchTab('trips')">
+          <div class="qa-icon">✈️</div>
+          <div class="qa-label" id="h-qa1">Find flights</div>
+          <div class="qa-sub">True total cost</div>
         </div>
-        <div class="quick-tile" onclick="switchTab('checklist')">
-          <div class="qt-num">✓</div>
-          <div class="qt-label" id="h-qa2">Checklist</div>
-          <div class="qt-sub">Passport · Visa · Bags</div>
+        <div class="qa-btn anim" onclick="switchTab('checklist')">
+          <div class="qa-icon">📋</div>
+          <div class="qa-label" id="h-qa2">Checklist</div>
+          <div class="qa-sub">Passport · Visa · Bags</div>
         </div>
-        <div class="quick-tile" onclick="switchTab('airport')">
-          <div class="qt-num">→</div>
-          <div class="qt-label" id="h-qa3">Airport guide</div>
-          <div class="qt-sub">Check-in to boarding</div>
+        <div class="qa-btn anim" onclick="switchTab('airport')">
+          <div class="qa-icon">🛫</div>
+          <div class="qa-label" id="h-qa3">Airport guide</div>
+          <div class="qa-sub">Check-in to boarding</div>
         </div>
-        <div class="quick-tile" onclick="switchTab('emergency')">
-          <div class="qt-num">!</div>
-          <div class="qt-label" id="h-qa4">Emergency</div>
-          <div class="qt-sub">Flights + fund</div>
+        <div class="qa-btn anim" onclick="switchTab('emergency')">
+          <div class="qa-icon">🆘</div>
+          <div class="qa-label" id="h-qa4">Emergency</div>
+          <div class="qa-sub">Flights + fund</div>
         </div>
       </div>
 
-      <div class="first-time-section">
+      <div class="first-time-wrap">
         <div class="section-eyebrow">New to flying?</div>
         <div class="first-time-card" onclick="switchTab('airport')">
-          <div class="ftc-text">
-            <div class="ftc-title" id="h-firsttime">First time flying from Brisbane?</div>
-            <div class="ftc-sub">Step by step — check-in to arrival</div>
+          <div style="font-size:28px;">🌏</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;" id="h-firsttime">First time flying from Brisbane?</div>
+            <div class="small">Step by step — check-in to arrival</div>
           </div>
-          <div class="ftc-arrow">›</div>
+          <div style="font-size:18px;color:var(--muted);">›</div>
         </div>
       </div>
     </div>
@@ -398,179 +398,188 @@ body { background: var(--cream); font-family: var(--display); min-height: 100vh;
     <!-- FLIGHTS -->
     <div class="screen" id="s-trips">
       <div class="flights-header">
-        <div class="screen-title" id="f-title">Find your flight</div>
-        <div class="screen-sub">Real prices · No hidden fees · Student routes from BNE</div>
+        <div class="h2">Find your flight</div>
+        <div class="small" style="margin-top:4px;font-family:var(--mono);">Real prices · No hidden fees · Student routes from BNE</div>
       </div>
 
       <div class="search-panel">
         <div class="search-row">
-          <span class="search-label">From</span>
+          <span class="search-lbl">From</span>
           <input type="text" value="Brisbane (BNE)" readonly style="font-weight:600;color:var(--blue);"/>
         </div>
         <div class="search-row">
-          <span class="search-label">To</span>
+          <span class="search-lbl">To</span>
           <select id="dest-select" onchange="onDestChange()">
             <option value="">Select destination...</option>
-            <optgroup label="India">
-              <option value="DEL">New Delhi (DEL)</option>
-              <option value="BOM">Mumbai (BOM)</option>
-              <option value="HYD">Hyderabad (HYD)</option>
-              <option value="MAA">Chennai (MAA)</option>
-            </optgroup>
-            <optgroup label="China">
-              <option value="CAN">Guangzhou (CAN)</option>
-              <option value="PEK">Beijing (PEK)</option>
-              <option value="PVG">Shanghai (PVG)</option>
-              <option value="CTU">Chengdu (CTU)</option>
-            </optgroup>
-            <optgroup label="Hong Kong · Taiwan">
-              <option value="HKG">Hong Kong (HKG)</option>
-              <option value="TPE">Taipei (TPE)</option>
-            </optgroup>
-            <optgroup label="Japan">
-              <option value="NRT">Tokyo Narita (NRT)</option>
-              <option value="KIX">Osaka (KIX)</option>
-            </optgroup>
-            <optgroup label="South Korea">
-              <option value="ICN">Seoul Incheon (ICN)</option>
-            </optgroup>
-            <optgroup label="South Asia">
-              <option value="KTM">Kathmandu (KTM)</option>
-              <option value="CMB">Colombo (CMB)</option>
-              <option value="DAC">Dhaka (DAC)</option>
-              <option value="KHI">Karachi (KHI)</option>
-            </optgroup>
-            <optgroup label="Southeast Asia">
-              <option value="HAN">Hanoi (HAN)</option>
-              <option value="SGN">Ho Chi Minh City (SGN)</option>
-              <option value="BKK">Bangkok (BKK)</option>
-              <option value="SIN">Singapore (SIN)</option>
-              <option value="CGK">Jakarta (CGK)</option>
-              <option value="KUL">Kuala Lumpur (KUL)</option>
-              <option value="MNL">Manila (MNL)</option>
-            </optgroup>
-            <optgroup label="Middle East">
-              <option value="DXB">Dubai (DXB)</option>
-              <option value="RUH">Riyadh (RUH)</option>
-              <option value="DOH">Doha (DOH)</option>
-            </optgroup>
-            <optgroup label="Europe">
-              <option value="CPH">Copenhagen (CPH)</option>
-              <option value="OSL">Oslo (OSL)</option>
-              <option value="LHR">London (LHR)</option>
-              <option value="CDG">Paris (CDG)</option>
-              <option value="FRA">Frankfurt (FRA)</option>
-              <option value="MAD">Madrid (MAD)</option>
-            </optgroup>
-            <optgroup label="Americas">
-              <option value="GRU">Sao Paulo (GRU)</option>
-              <option value="BOG">Bogota (BOG)</option>
-              <option value="MEX">Mexico City (MEX)</option>
-            </optgroup>
-            <optgroup label="Africa">
-              <option value="JNB">Johannesburg (JNB)</option>
-              <option value="NBO">Nairobi (NBO)</option>
-            </optgroup>
-            <optgroup label="Pacific">
-              <option value="AKL">Auckland (AKL)</option>
-            </optgroup>
+            <optgroup label="India"><option value="DEL">New Delhi (DEL)</option><option value="BOM">Mumbai (BOM)</option><option value="HYD">Hyderabad (HYD)</option><option value="MAA">Chennai (MAA)</option></optgroup>
+            <optgroup label="China"><option value="CAN">Guangzhou (CAN)</option><option value="PEK">Beijing (PEK)</option><option value="PVG">Shanghai (PVG)</option><option value="CTU">Chengdu (CTU)</option></optgroup>
+            <optgroup label="Hong Kong · Taiwan"><option value="HKG">Hong Kong (HKG)</option><option value="TPE">Taipei (TPE)</option></optgroup>
+            <optgroup label="Japan"><option value="NRT">Tokyo Narita (NRT)</option><option value="KIX">Osaka (KIX)</option></optgroup>
+            <optgroup label="South Korea"><option value="ICN">Seoul Incheon (ICN)</option></optgroup>
+            <optgroup label="South Asia"><option value="KTM">Kathmandu (KTM)</option><option value="CMB">Colombo (CMB)</option><option value="DAC">Dhaka (DAC)</option><option value="KHI">Karachi (KHI)</option></optgroup>
+            <optgroup label="Southeast Asia"><option value="HAN">Hanoi (HAN)</option><option value="SGN">Ho Chi Minh City (SGN)</option><option value="BKK">Bangkok (BKK)</option><option value="SIN">Singapore (SIN)</option><option value="CGK">Jakarta (CGK)</option><option value="KUL">Kuala Lumpur (KUL)</option><option value="MNL">Manila (MNL)</option></optgroup>
+            <optgroup label="Middle East"><option value="DXB">Dubai (DXB)</option><option value="RUH">Riyadh (RUH)</option><option value="DOH">Doha (DOH)</option></optgroup>
+            <optgroup label="Europe"><option value="CPH">Copenhagen (CPH)</option><option value="OSL">Oslo (OSL)</option><option value="LHR">London (LHR)</option><option value="CDG">Paris (CDG)</option><option value="FRA">Frankfurt (FRA)</option><option value="MAD">Madrid (MAD)</option></optgroup>
+            <optgroup label="Americas"><option value="GRU">Sao Paulo (GRU)</option><option value="BOG">Bogota (BOG)</option><option value="MEX">Mexico City (MEX)</option></optgroup>
+            <optgroup label="Africa"><option value="JNB">Johannesburg (JNB)</option><option value="NBO">Nairobi (NBO)</option></optgroup>
+            <optgroup label="Pacific"><option value="AKL">Auckland (AKL)</option></optgroup>
           </select>
         </div>
         <div class="search-row">
-          <span class="search-label">Date</span>
+          <span class="search-lbl">Date</span>
           <input type="date" id="date-input"/>
         </div>
       </div>
 
-      <div class="filter-strip">
-        <button class="filter-pill on" onclick="toggleFilter(this,'studentVerified')">Student verified</button>
-        <button class="filter-pill on" onclick="toggleFilter(this,'bagsIncluded')">Bags included</button>
-        <button class="filter-pill" onclick="toggleFilter(this,'unsoldSeats')">Last-minute</button>
-        <button class="filter-pill" onclick="toggleFilter(this,'flexDates')">Flexible dates</button>
+      <div class="filter-row">
+        <button class="filter-chip on" onclick="toggleFilter(this,'studentVerified')">🎓 Student verified</button>
+        <button class="filter-chip on" onclick="toggleFilter(this,'bagsIncluded')">🧳 Bags included</button>
+        <button class="filter-chip" onclick="toggleFilter(this,'unsoldSeats')">🔥 Last-minute</button>
+        <button class="filter-chip" onclick="toggleFilter(this,'flexDates')">📅 Flexible dates</button>
       </div>
 
-      <div class="result-eyebrow" id="result-label">Select a destination above</div>
+      <div class="result-label" id="result-label">Select a destination to see flights</div>
       <div id="flight-results">
-        <div style="text-align:center;padding:32px 20px;color:var(--muted);font-size:13px;font-family:var(--mono);">Choose your destination to see all available flights with true total cost — no hidden fees.</div>
+        <div style="text-align:center;padding:32px 20px;color:var(--muted);font-size:13px;">Choose your destination above to see all available flights with true total cost.</div>
+      </div>
+    </div>
+
+    <!-- CHECKOUT -->
+    <div class="screen" id="s-checkout">
+      <div class="checkout-hero">
+        <button class="checkout-back" onclick="switchTab('trips')">← Back to flights</button>
+        <div class="checkout-title">Book your flight</div>
+        <div class="checkout-sub" id="co-subtitle">Review and confirm</div>
+      </div>
+
+      <div class="co-section">
+        <div class="co-label">Your selection</div>
+        <div class="co-summary">
+          <div class="fc-airline" id="co-airline" style="font-size:15px;margin-bottom:4px;">Singapore Airlines</div>
+          <div class="fc-route" id="co-route">BNE → SIN → home · 2 stops</div>
+          <div class="co-price-row">
+            <span class="co-price-label">True total cost</span>
+            <span class="co-price-total" id="co-total">A$698</span>
+          </div>
+        </div>
+
+        <div class="co-label">Passenger details</div>
+        <div class="co-field">
+          <div class="co-field-label">Full name (as on passport)</div>
+          <input type="text" placeholder="e.g. Arjun Sharma"/>
+        </div>
+        <div class="co-row">
+          <div class="co-field">
+            <div class="co-field-label">Date of birth</div>
+            <input type="date"/>
+          </div>
+          <div class="co-field">
+            <div class="co-field-label">Passport number</div>
+            <input type="text" placeholder="A1234567"/>
+          </div>
+        </div>
+        <div class="co-field">
+          <div class="co-field-label">Student email</div>
+          <input type="email" placeholder="s1234567@student.uq.edu.au"/>
+        </div>
+
+        <div class="co-label" style="margin-top:4px;">Price breakdown</div>
+        <div class="co-breakdown">
+          <div class="co-breakdown-row"><span class="co-breakdown-label">Base fare</span><span class="co-breakdown-val" id="co-base">A$680</span></div>
+          <div class="co-breakdown-row"><span class="co-breakdown-label">Checked baggage</span><span class="co-breakdown-val" id="co-bags">Included</span></div>
+          <div class="co-breakdown-row"><span class="co-breakdown-label">Seat selection</span><span class="co-breakdown-val" id="co-seat">A$18</span></div>
+          <div class="co-breakdown-row"><span class="co-breakdown-label">Student discount</span><span class="co-breakdown-val" style="color:var(--green);">—A$0</span></div>
+          <div class="co-breakdown-row total"><span class="co-breakdown-label" style="font-weight:600;">Total charged</span><span class="co-breakdown-val" id="co-total2">A$698</span></div>
+        </div>
+
+        <div class="co-guarantee">
+          <div class="co-guarantee-icon">🔒</div>
+          <div class="co-guarantee-text">Your booking is protected. Verified student fares are held for 24 hours. No hidden fees — what you see is what you pay.</div>
+        </div>
+
+        <button class="btn btn-green" onclick="confirmBooking()" style="margin-bottom:8px;">Confirm booking — <span id="co-btn-total">A$698</span></button>
+        <button class="btn btn-outline" onclick="switchTab('trips')">Go back</button>
+      </div>
+
+      <!-- Confirmation overlay -->
+      <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-sheet scale-in">
+          <div class="confirm-icon">🎉</div>
+          <div class="confirm-title">You're booked!</div>
+          <div class="confirm-sub">Your flight has been confirmed. Check your student email for the full itinerary and boarding pass.</div>
+          <div class="confirm-ref" id="confirm-ref">FM-2026-BOM-4829</div>
+          <button class="btn btn-green" style="margin-bottom:8px;" onclick="postConfirm()">Go to checklist</button>
+          <button class="btn btn-outline" onclick="document.getElementById('confirm-overlay').style.display='none';switchTab('home');">Back to home</button>
+        </div>
       </div>
     </div>
 
     <!-- CHECKLIST -->
     <div class="screen" id="s-checklist">
-      <div class="checklist-hero">
-        <div class="checklist-hero-title">Get ready to fly</div>
-        <div class="checklist-hero-sub">Tap each item as you complete it</div>
-        <div class="progress-row">
-          <div class="progress-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
-          <div class="progress-label" id="progress-label">2 of 8 complete</div>
-        </div>
+      <div class="checklist-header">
+        <div style="font-size:12px;opacity:0.6;font-family:var(--mono);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;">Your travel checklist</div>
+        <div class="h2" style="color:white;">Get ready to fly</div>
+        <div style="font-size:12px;opacity:0.6;margin-top:4px;">Tap each item as you complete it</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:25%;"></div></div>
+        <div style="font-size:11px;opacity:0.5;margin-top:6px;font-family:var(--mono);" id="progress-label">2 of 8 complete</div>
       </div>
 
-      <!-- Destination quick reference -->
+      <!-- Destination reference -->
       <div class="dest-ref">
-        <div class="dest-ref-header" onclick="toggleDestRef()">
-          <div class="dest-ref-title">Available destinations</div>
-          <div class="dest-ref-toggle" id="dest-ref-arrow">+ Show all</div>
+        <div class="dest-ref-head" onclick="toggleDestRef()">
+          <div class="dest-ref-title">Available destinations — tap to search flights</div>
+          <div id="dest-ref-arrow" style="font-family:var(--mono);font-size:11px;color:var(--blue);">+ Show</div>
         </div>
         <div class="dest-ref-body" id="dest-ref-body">
-          <div class="dest-group"><div class="dest-group-label">India</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('DEL')">Delhi</span><span class="dest-tag" onclick="goToFlight('BOM')">Mumbai</span><span class="dest-tag" onclick="goToFlight('HYD')">Hyderabad</span><span class="dest-tag" onclick="goToFlight('MAA')">Chennai</span></div></div>
-          <div class="dest-group"><div class="dest-group-label">China</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('CAN')">Guangzhou</span><span class="dest-tag" onclick="goToFlight('PEK')">Beijing</span><span class="dest-tag" onclick="goToFlight('PVG')">Shanghai</span><span class="dest-tag" onclick="goToFlight('CTU')">Chengdu</span></div></div>
-          <div class="dest-group"><div class="dest-group-label">East Asia</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('HKG')">Hong Kong</span><span class="dest-tag" onclick="goToFlight('TPE')">Taipei</span><span class="dest-tag" onclick="goToFlight('NRT')">Tokyo</span><span class="dest-tag" onclick="goToFlight('KIX')">Osaka</span><span class="dest-tag" onclick="goToFlight('ICN')">Seoul</span></div></div>
-          <div class="dest-group"><div class="dest-group-label">South Asia</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('KTM')">Kathmandu</span><span class="dest-tag" onclick="goToFlight('CMB')">Colombo</span><span class="dest-tag" onclick="goToFlight('DAC')">Dhaka</span><span class="dest-tag" onclick="goToFlight('KHI')">Karachi</span></div></div>
-          <div class="dest-group"><div class="dest-group-label">Southeast Asia</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('BKK')">Bangkok</span><span class="dest-tag" onclick="goToFlight('SIN')">Singapore</span><span class="dest-tag" onclick="goToFlight('HAN')">Hanoi</span><span class="dest-tag" onclick="goToFlight('SGN')">Ho Chi Minh</span><span class="dest-tag" onclick="goToFlight('CGK')">Jakarta</span><span class="dest-tag" onclick="goToFlight('KUL')">KL</span><span class="dest-tag" onclick="goToFlight('MNL')">Manila</span></div></div>
-          <div class="dest-group"><div class="dest-group-label">Middle East</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('DXB')">Dubai</span><span class="dest-tag" onclick="goToFlight('DOH')">Doha</span><span class="dest-tag" onclick="goToFlight('RUH')">Riyadh</span></div></div>
-          <div class="dest-group"><div class="dest-group-label">Europe</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('CPH')">Copenhagen</span><span class="dest-tag" onclick="goToFlight('OSL')">Oslo</span><span class="dest-tag" onclick="goToFlight('LHR')">London</span><span class="dest-tag" onclick="goToFlight('CDG')">Paris</span><span class="dest-tag" onclick="goToFlight('FRA')">Frankfurt</span><span class="dest-tag" onclick="goToFlight('MAD')">Madrid</span></div></div>
-          <div class="dest-group"><div class="dest-group-label">Americas · Africa · Pacific</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('GRU')">Sao Paulo</span><span class="dest-tag" onclick="goToFlight('BOG')">Bogota</span><span class="dest-tag" onclick="goToFlight('MEX')">Mexico City</span><span class="dest-tag" onclick="goToFlight('JNB')">Johannesburg</span><span class="dest-tag" onclick="goToFlight('NBO')">Nairobi</span><span class="dest-tag" onclick="goToFlight('AKL')">Auckland</span></div></div>
+          <div class="dest-group"><div class="dest-group-lbl">India</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('DEL')">Delhi</span><span class="dest-tag" onclick="goToFlight('BOM')">Mumbai</span><span class="dest-tag" onclick="goToFlight('HYD')">Hyderabad</span><span class="dest-tag" onclick="goToFlight('MAA')">Chennai</span></div></div>
+          <div class="dest-group"><div class="dest-group-lbl">China</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('CAN')">Guangzhou</span><span class="dest-tag" onclick="goToFlight('PEK')">Beijing</span><span class="dest-tag" onclick="goToFlight('PVG')">Shanghai</span><span class="dest-tag" onclick="goToFlight('CTU')">Chengdu</span></div></div>
+          <div class="dest-group"><div class="dest-group-lbl">East Asia</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('HKG')">Hong Kong</span><span class="dest-tag" onclick="goToFlight('TPE')">Taipei</span><span class="dest-tag" onclick="goToFlight('NRT')">Tokyo</span><span class="dest-tag" onclick="goToFlight('KIX')">Osaka</span><span class="dest-tag" onclick="goToFlight('ICN')">Seoul</span></div></div>
+          <div class="dest-group"><div class="dest-group-lbl">South Asia</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('KTM')">Kathmandu</span><span class="dest-tag" onclick="goToFlight('CMB')">Colombo</span><span class="dest-tag" onclick="goToFlight('DAC')">Dhaka</span><span class="dest-tag" onclick="goToFlight('KHI')">Karachi</span></div></div>
+          <div class="dest-group"><div class="dest-group-lbl">Southeast Asia</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('BKK')">Bangkok</span><span class="dest-tag" onclick="goToFlight('SIN')">Singapore</span><span class="dest-tag" onclick="goToFlight('HAN')">Hanoi</span><span class="dest-tag" onclick="goToFlight('SGN')">Ho Chi Minh</span><span class="dest-tag" onclick="goToFlight('CGK')">Jakarta</span><span class="dest-tag" onclick="goToFlight('KUL')">KL</span><span class="dest-tag" onclick="goToFlight('MNL')">Manila</span></div></div>
+          <div class="dest-group"><div class="dest-group-lbl">Middle East</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('DXB')">Dubai</span><span class="dest-tag" onclick="goToFlight('DOH')">Doha</span><span class="dest-tag" onclick="goToFlight('RUH')">Riyadh</span></div></div>
+          <div class="dest-group"><div class="dest-group-lbl">Europe</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('CPH')">Copenhagen</span><span class="dest-tag" onclick="goToFlight('OSL')">Oslo</span><span class="dest-tag" onclick="goToFlight('LHR')">London</span><span class="dest-tag" onclick="goToFlight('CDG')">Paris</span><span class="dest-tag" onclick="goToFlight('FRA')">Frankfurt</span><span class="dest-tag" onclick="goToFlight('MAD')">Madrid</span></div></div>
+          <div class="dest-group"><div class="dest-group-lbl">Americas · Africa · Pacific</div><div class="dest-tags"><span class="dest-tag" onclick="goToFlight('GRU')">São Paulo</span><span class="dest-tag" onclick="goToFlight('BOG')">Bogotá</span><span class="dest-tag" onclick="goToFlight('MEX')">Mexico City</span><span class="dest-tag" onclick="goToFlight('JNB')">Johannesburg</span><span class="dest-tag" onclick="goToFlight('NBO')">Nairobi</span><span class="dest-tag" onclick="goToFlight('AKL')">Auckland</span></div></div>
         </div>
       </div>
 
-      <div class="check-group">
-        <div class="check-group-header"><div class="check-group-label">Documents</div></div>
-        <div class="check-row" onclick="toggleItem(this)"><div class="check-box done"></div><div><div class="check-main">Passport — valid 6+ months</div><div class="check-sub">Check expiry before you book</div></div></div>
-        <div class="check-row" onclick="toggleItem(this)"><div class="check-box done"></div><div><div class="check-main">Student visa grant letter</div><div class="check-sub">Save to phone + print a copy</div></div></div>
-        <div class="check-row" onclick="toggleItem(this)"><div class="check-box"></div><div><div class="check-main">Enrolment Confirmation (CoE)</div><div class="check-sub">Border may ask on return</div></div></div>
-      </div>
+      <div class="check-section"><div class="check-section-label">Documents</div></div>
+      <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui done"></div><div><div class="check-main">Passport — valid 6+ months</div><div class="check-sub">Check expiry before you book</div></div></div>
+      <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui done"></div><div><div class="check-main">Student visa grant letter</div><div class="check-sub">Save to phone + print a copy</div></div></div>
+      <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Enrolment Confirmation (CoE)</div><div class="check-sub">Border may ask on return — have it ready</div></div></div>
 
-      <div class="check-group">
-        <div class="check-group-header"><div class="check-group-label">Baggage</div></div>
-        <div class="check-row" onclick="toggleItem(this)"><div class="check-box"></div><div><div class="check-main">Weigh checked bag — under airline limit</div><div class="check-sub">Overweight fees: A$20–50 per kg at the counter</div></div></div>
-        <div class="check-row" onclick="toggleItem(this)"><div class="check-box"></div><div><div class="check-main">Carry-on under 7 kg</div><div class="check-sub">No liquids over 100ml in hand luggage</div></div></div>
-      </div>
+      <div class="check-section" style="margin-top:4px;"><div class="check-section-label">Baggage</div></div>
+      <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Weigh checked bag — under airline limit</div><div class="check-sub">Overweight fees: A$20–50 per kg at the counter</div></div></div>
+      <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Carry-on under 7 kg</div><div class="check-sub">No liquids over 100ml in hand luggage</div></div></div>
 
-      <div class="check-group">
-        <div class="check-group-header"><div class="check-group-label">Immigration — departing Australia</div></div>
-        <div class="check-row" onclick="toggleItem(this)"><div class="check-box"></div><div><div class="check-main">Incoming passenger card ready</div><div class="check-sub">Declare ALL food, plant, and animal items</div></div></div>
-        <div class="expand-row" onclick="toggleQuestions(this)">
-          <div class="check-box"></div>
-          <div style="flex:1;"><div class="check-main">Know what you may be asked</div><div class="check-sub">Tap to see likely immigration questions</div></div>
-          <div class="expand-arrow">›</div>
+      <div class="check-section" style="margin-top:4px;"><div class="check-section-label">Immigration — departing Australia</div></div>
+      <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Incoming passenger card ready</div><div class="check-sub">Declare ALL food, plant, and animal items</div></div></div>
+      <div class="expand-trigger" onclick="toggleQuestions(this)">
+        <div class="check-box-ui"></div>
+        <div style="flex:1;"><div class="check-main">Know what you may be asked</div><div class="check-sub">Tap to see likely immigration questions</div></div>
+        <div class="expand-arrow">›</div>
+      </div>
+      <div class="expand-panel">
+        <div class="expand-panel-inner">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Common questions at BNE immigration</div>
+          <div class="q-item"><div class="q-num">Q1</div><div><div class="q-text">What is the purpose of your travel?</div><div class="q-tip">Visiting family / personal travel</div></div></div>
+          <div class="q-item"><div class="q-num">Q2</div><div><div class="q-text">How long will you be away?</div><div class="q-tip">Have return date and flight number ready</div></div></div>
+          <div class="q-item"><div class="q-num">Q3</div><div><div class="q-text">Do you have sufficient funds?</div><div class="q-tip">Know your approximate budget or card limit</div></div></div>
+          <div class="q-item"><div class="q-num">Q4</div><div><div class="q-text">Where will you be staying?</div><div class="q-tip">Home address or family contact</div></div></div>
+          <div class="q-item"><div class="q-num">Q5</div><div><div class="q-text">Are you currently enrolled in study?</div><div class="q-tip">Have CoE or student ID accessible</div></div></div>
+          <div class="q-item"><div class="q-num">Q6</div><div><div class="q-text">Do you intend to return to Australia?</div><div class="q-tip">Yes — your visa is valid and you are enrolled</div></div></div>
         </div>
-        <div class="expand-panel">
-          <div class="expand-inner">
-            <div style="font-family:var(--mono);font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Common immigration questions at BNE</div>
-            <div class="q-item"><div class="q-num">Q1</div><div><div class="q-text">What is the purpose of your travel?</div><div class="q-tip">Visiting family / personal travel</div></div></div>
-            <div class="q-item"><div class="q-num">Q2</div><div><div class="q-text">How long will you be away?</div><div class="q-tip">Have return date and flight number ready</div></div></div>
-            <div class="q-item"><div class="q-num">Q3</div><div><div class="q-text">Do you have sufficient funds?</div><div class="q-tip">Know your approximate budget or card limit</div></div></div>
-            <div class="q-item"><div class="q-num">Q4</div><div><div class="q-text">Where will you be staying?</div><div class="q-tip">Home address or family contact</div></div></div>
-            <div class="q-item"><div class="q-num">Q5</div><div><div class="q-text">Are you currently enrolled in study?</div><div class="q-tip">Have CoE or student ID accessible</div></div></div>
-            <div class="q-item"><div class="q-num">Q6</div><div><div class="q-text">Do you intend to return to Australia?</div><div class="q-tip">Yes — your visa is valid and you are enrolled</div></div></div>
-          </div>
-        </div>
-        <div class="check-row" onclick="toggleItem(this)"><div class="check-box"></div><div><div class="check-main">Australian customs declaration</div><div class="check-sub">Use the ABF app to pre-declare — speeds up queue</div></div></div>
       </div>
+      <div class="check-item" onclick="toggleItem(this)"><div class="check-box-ui"></div><div><div class="check-main">Australian customs declaration</div><div class="check-sub">Use the ABF app to pre-declare — speeds up the queue</div></div></div>
 
-      <div class="check-group">
-        <div class="check-group-header"><div class="check-group-label">Official immigration resources</div></div>
-        <a class="doc-link" href="https://immi.homeaffairs.gov.au" target="_blank"><span class="doc-flag">🇦🇺</span><div><div class="doc-name">Australian Immigration</div><div class="doc-url">immi.homeaffairs.gov.au</div></div><div class="doc-arrow">›</div></a>
-        <a class="doc-link" href="https://www.abf.gov.au/entering-and-leaving-australia/crossing-the-border" target="_blank"><span class="doc-flag">🛃</span><div><div class="doc-name">Australian Border Force</div><div class="doc-url">abf.gov.au</div></div><div class="doc-arrow">›</div></a>
-        <a class="doc-link" href="https://www.india.gov.in/topics/passport-visa" target="_blank"><span class="doc-flag">🇮🇳</span><div><div class="doc-name">India — Passport & Visa</div><div class="doc-url">india.gov.in</div></div><div class="doc-arrow">›</div></a>
-        <a class="doc-link" href="https://www.visaforchina.cn" target="_blank"><span class="doc-flag">🇨🇳</span><div><div class="doc-name">China Visa Service Center</div><div class="doc-url">visaforchina.cn</div></div><div class="doc-arrow">›</div></a>
-        <a class="doc-link" href="https://www.immigration.gov.np" target="_blank"><span class="doc-flag">🇳🇵</span><div><div class="doc-name">Nepal Immigration</div><div class="doc-url">immigration.gov.np</div></div><div class="doc-arrow">›</div></a>
-        <a class="doc-link" href="https://www.hikorea.go.kr" target="_blank"><span class="doc-flag">🇰🇷</span><div><div class="doc-name">Korea Immigration Service</div><div class="doc-url">hikorea.go.kr</div></div><div class="doc-arrow">›</div></a>
-        <a class="doc-link" href="https://www.mofa.go.jp/j_info/visit/visa/index.html" target="_blank"><span class="doc-flag">🇯🇵</span><div><div class="doc-name">Japan Ministry of Foreign Affairs</div><div class="doc-url">mofa.go.jp</div></div><div class="doc-arrow">›</div></a>
-      </div>
+      <div class="check-section" style="margin-top:4px;"><div class="check-section-label">Official immigration resources</div></div>
+      <a class="doc-link" href="https://immi.homeaffairs.gov.au" target="_blank"><span style="font-size:18px;">🇦🇺</span><div><div class="doc-name">Australian Immigration</div><div class="doc-url">immi.homeaffairs.gov.au</div></div><div class="doc-arrow">›</div></a>
+      <a class="doc-link" href="https://www.abf.gov.au/entering-and-leaving-australia/crossing-the-border" target="_blank"><span style="font-size:18px;">🛃</span><div><div class="doc-name">Australian Border Force</div><div class="doc-url">abf.gov.au</div></div><div class="doc-arrow">›</div></a>
+      <a class="doc-link" href="https://www.india.gov.in/topics/passport-visa" target="_blank"><span style="font-size:18px;">🇮🇳</span><div><div class="doc-name">India — Passport & Visa</div><div class="doc-url">india.gov.in</div></div><div class="doc-arrow">›</div></a>
+      <a class="doc-link" href="https://www.visaforchina.cn" target="_blank"><span style="font-size:18px;">🇨🇳</span><div><div class="doc-name">China Visa Service Center</div><div class="doc-url">visaforchina.cn</div></div><div class="doc-arrow">›</div></a>
+      <a class="doc-link" href="https://www.immigration.gov.np" target="_blank"><span style="font-size:18px;">🇳🇵</span><div><div class="doc-name">Nepal Immigration</div><div class="doc-url">immigration.gov.np</div></div><div class="doc-arrow">›</div></a>
+      <a class="doc-link" href="https://www.hikorea.go.kr" target="_blank"><span style="font-size:18px;">🇰🇷</span><div><div class="doc-name">Korea Immigration Service</div><div class="doc-url">hikorea.go.kr</div></div><div class="doc-arrow">›</div></a>
+      <a class="doc-link" href="https://www.mofa.go.jp/j_info/visit/visa/index.html" target="_blank"><span style="font-size:18px;">🇯🇵</span><div><div class="doc-name">Japan Ministry of Foreign Affairs</div><div class="doc-url">mofa.go.jp</div></div><div class="doc-arrow">›</div></a>
 
-      <div style="height:4px;"></div>
       <div class="wait-strip">
         <div class="wait-dot"></div>
         <div class="wait-text">BNE immigration — ~12 min departures · ~25 min arrivals</div>
@@ -580,67 +589,57 @@ body { background: var(--cream); font-family: var(--display); min-height: 100vh;
     <!-- AIRPORT -->
     <div class="screen" id="s-airport">
       <div class="airport-hero">
-        <div class="airport-hero-title">Step by step.</div>
-        <div class="airport-hero-sub">From check-in to arrival — tap each stage</div>
+        <div style="font-size:12px;opacity:0.5;font-family:var(--mono);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.06em;">Airport Guide</div>
+        <div class="h1" style="color:white;">Step by step.</div>
+        <div style="font-size:13px;opacity:0.6;margin-top:8px;line-height:1.6;">Tap each stage to see what to expect.</div>
       </div>
       <div style="height:10px;"></div>
-
-      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">1</div><div class="ag-head-text"><div class="ag-title">Check-in</div><div class="ag-when">2–3 hrs before departure</div></div><div class="ag-chevron">›</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-label">Online</div><div class="ag-tip-text">Opens 24–48h before — do it from your phone to pick your seat early and avoid queues.</div></div><div class="ag-tip"><div class="ag-tip-label">Bag drop</div><div class="ag-tip-text">Separate from check-in — follow airport signs. Have your booking reference ready.</div></div><div class="ag-tip"><div class="ag-tip-label">Weight</div><div class="ag-tip-text">Checked at drop-off. <strong>Overweight fees: A$20–50 per kg.</strong> Weigh at home first.</div></div></div></div></div>
-
-      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">2</div><div class="ag-head-text"><div class="ag-title">Baggage drop</div><div class="ag-when">After check-in</div></div><div class="ag-chevron">›</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-label">Tag</div><div class="ag-tip-text">Printed at check-in — attach it to your bag before joining the drop queue.</div></div><div class="ag-tip"><div class="ag-tip-label">Fragile</div><div class="ag-tip-text">Declare at the counter so items are labelled for careful handling.</div></div><div class="ag-tip"><div class="ag-tip-label">Lock</div><div class="ag-tip-text">Use a TSA-approved lock — security can open it without breaking it.</div></div></div></div></div>
-
-      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">3</div><div class="ag-head-text"><div class="ag-title">Security screening</div><div class="ag-when">Allow 20–30 min</div></div><div class="ag-chevron">›</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-label">Electronics</div><div class="ag-tip-text">Laptop and large devices go in a separate tray — remove before the belt.</div></div><div class="ag-tip"><div class="ag-tip-label">Liquids</div><div class="ag-tip-text"><strong>Max 100ml per container</strong> in one clear zip-lock bag. Buy water after security.</div></div><div class="ag-tip"><div class="ag-tip-label">Wear</div><div class="ag-tip-text">Some airports ask for shoes and belt off. Watch what people ahead of you do.</div></div></div></div></div>
-
-      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">4</div><div class="ag-head-text"><div class="ag-title">Departure immigration</div><div class="ag-when">BNE — SmartGate available</div></div><div class="ag-chevron">›</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-label">SmartGate</div><div class="ag-tip-text">Use the automated lane if you have an e-passport. Much faster than manual.</div></div><div class="ag-tip"><div class="ag-tip-label">Have ready</div><div class="ag-tip-text">Passport, boarding pass, and student visa grant letter on your phone.</div></div><div class="ag-tip"><div class="ag-tip-label">Questions</div><div class="ag-tip-text">Routine — purpose of travel, how long, return date. See Checklist tab for full list.</div></div></div></div></div>
-
-      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">5</div><div class="ag-head-text"><div class="ag-title">Transit / layover</div><div class="ag-when">At your connecting airport</div></div><div class="ag-chevron">›</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-label">Timing</div><div class="ag-tip-text">Under 90 min is tight for international connections. Ask staff if unsure.</div></div><div class="ag-tip"><div class="ag-tip-label">Changi</div><div class="ag-tip-text"><strong>4h+ at SIN?</strong> Butterfly garden, Jewel waterfall, free shower at transit hotel — all airside.</div></div><div class="ag-tip"><div class="ag-tip-label">Food</div><div class="ag-tip-text">Transit airports often have better and cheaper food than the plane.</div></div></div></div></div>
-
-      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">6</div><div class="ag-head-text"><div class="ag-title">Boarding</div><div class="ag-when">Gate closes 20–30 min early</div></div><div class="ag-chevron">›</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-label">Gate</div><div class="ag-tip-text">Be at the gate <strong>45 min before departure</strong> — not at departure time.</div></div><div class="ag-tip"><div class="ag-tip-label">Overhead</div><div class="ag-tip-text">Overhead space fills fast — board early if you have a large carry-on.</div></div><div class="ag-tip"><div class="ag-tip-label">Phone</div><div class="ag-tip-text">Flight mode once doors close. Download movies and offline maps before boarding.</div></div></div></div></div>
-
-      <div class="ag-step" style="margin-bottom:14px;"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">7</div><div class="ag-head-text"><div class="ag-title">Arrival & customs</div><div class="ag-when">At your home country</div></div><div class="ag-chevron">›</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-label">Order</div><div class="ag-tip-text">Immigration first — then baggage claim — then customs declaration.</div></div><div class="ag-tip"><div class="ag-tip-label">Bags</div><div class="ag-tip-text">Check screens for your flight number and belt. Allow 20–40 min for bags to appear.</div></div><div class="ag-tip"><div class="ag-tip-label">Customs</div><div class="ag-tip-text">Declare electronics, cash over limit, and any food or plant items. When in doubt, declare.</div></div><div class="ag-tip"><div class="ag-tip-label">Onward</div><div class="ag-tip-text">Pre-book your ride or arrange pickup before you land — airport taxi queues can be long.</div></div></div></div></div>
+      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">1</div><div style="flex:1;"><div class="ag-title">Check-in</div><div class="ag-when">2–3 hrs before departure</div></div><div class="ag-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🎫</div><div class="ag-tip-text"><strong>Online check-in</strong> opens 24–48h before — do it from your phone to pick your seat early.</div></div><div class="ag-tip"><div class="ag-tip-icon">🧳</div><div class="ag-tip-text"><strong>Bag drop</strong> is separate — follow airport signs. Have your booking reference ready.</div></div><div class="ag-tip"><div class="ag-tip-icon">⚖️</div><div class="ag-tip-text"><strong>Bag weight</strong> is checked at drop-off. Overweight fees: A$20–50 per kg — weigh at home first.</div></div></div></div></div>
+      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">2</div><div style="flex:1;"><div class="ag-title">Baggage drop</div><div class="ag-when">After check-in</div></div><div class="ag-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🏷️</div><div class="ag-tip-text"><strong>Bag tag</strong> is printed at check-in — attach it before joining the drop queue.</div></div><div class="ag-tip"><div class="ag-tip-icon">🔒</div><div class="ag-tip-text"><strong>TSA-approved lock</strong> — security can open it without breaking it.</div></div></div></div></div>
+      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">3</div><div style="flex:1;"><div class="ag-title">Security screening</div><div class="ag-when">Allow 20–30 min</div></div><div class="ag-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">💻</div><div class="ag-tip-text"><strong>Laptop and large electronics</strong> go in a separate tray — remove before the belt.</div></div><div class="ag-tip"><div class="ag-tip-icon">💧</div><div class="ag-tip-text"><strong>Liquids rule</strong> — max 100ml per container in one clear zip-lock bag.</div></div><div class="ag-tip"><div class="ag-tip-icon">👟</div><div class="ag-tip-text"><strong>Shoes and belt</strong> — some airports ask you to remove these.</div></div></div></div></div>
+      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">4</div><div style="flex:1;"><div class="ag-title">Departure immigration</div><div class="ag-when">BNE — SmartGate available</div></div><div class="ag-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🛂</div><div class="ag-tip-text"><strong>SmartGate at BNE</strong> — use the automated lane if you have an e-passport.</div></div><div class="ag-tip"><div class="ag-tip-icon">📄</div><div class="ag-tip-text"><strong>Have ready</strong> — passport, boarding pass, and student visa grant letter.</div></div><div class="ag-tip"><div class="ag-tip-icon">😌</div><div class="ag-tip-text"><strong>Stay calm</strong> — questions are routine. See Checklist for full list.</div></div></div></div></div>
+      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">5</div><div style="flex:1;"><div class="ag-title">Transit / layover</div><div class="ag-when">At your connecting airport</div></div><div class="ag-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🔄</div><div class="ag-tip-text"><strong>Under 90 min</strong> is tight for international connections — ask staff if unsure.</div></div><div class="ag-tip"><div class="ag-tip-icon">🌿</div><div class="ag-tip-text"><strong>Changi SIN — 4h+ layover?</strong> Butterfly garden, Jewel waterfall, free shower — all airside.</div></div></div></div></div>
+      <div class="ag-step"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">6</div><div style="flex:1;"><div class="ag-title">Boarding</div><div class="ag-when">Gate closes 20–30 min early</div></div><div class="ag-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🚪</div><div class="ag-tip-text"><strong>Gate closes early</strong> — be there 45 min before departure, not at departure time.</div></div><div class="ag-tip"><div class="ag-tip-icon">📵</div><div class="ag-tip-text"><strong>Flight mode</strong> once doors close. Download movies before boarding.</div></div></div></div></div>
+      <div class="ag-step" style="margin-bottom:14px;"><div class="ag-head" onclick="toggleStep(this)"><div class="ag-num">7</div><div style="flex:1;"><div class="ag-title">Arrival & customs</div><div class="ag-when">At your home country</div></div><div class="ag-arrow">▼</div></div><div class="ag-body"><div class="ag-body-inner"><div class="ag-tip"><div class="ag-tip-icon">🛬</div><div class="ag-tip-text"><strong>Immigration first</strong> — then baggage claim — then customs declaration.</div></div><div class="ag-tip"><div class="ag-tip-icon">🧳</div><div class="ag-tip-text"><strong>Baggage claim</strong> — check screens for your flight and belt. Allow 20–40 min.</div></div><div class="ag-tip"><div class="ag-tip-icon">📝</div><div class="ag-tip-text"><strong>Customs</strong> — declare electronics, cash over limit, any food or plant items.</div></div></div></div></div>
     </div>
 
     <!-- EMERGENCY -->
     <div class="screen" id="s-emergency">
       <div class="emergency-hero">
-        <div class="emergency-hero-title">We've got you.</div>
-        <div class="emergency-hero-sub">For when life doesn't wait</div>
+        <div style="font-size:12px;opacity:0.5;font-family:var(--mono);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Emergency Support</div>
+        <div class="h1" style="color:white;">We've got you.</div>
+        <div style="font-size:13px;opacity:0.6;margin-top:8px;line-height:1.6;">For when life doesn't wait.</div>
       </div>
 
-      <div class="e-card">
-        <div class="e-card-head"><div class="e-card-icon">◎</div><div><div class="e-card-title">Emergency travel fund</div><div class="e-card-sub">University co-funded · A$25/semester opt-in</div></div></div>
+      <div class="e-card" style="margin-top:14px;">
+        <div class="e-card-head"><div style="font-size:20px;">💰</div><div><div class="e-card-title">Emergency travel fund</div><div class="e-card-sub">University co-funded · A$25/semester opt-in</div></div></div>
         <div class="e-card-body">
-          <div class="fund-bar-wrap">
-            <div class="fund-bar-label"><span>Pool this semester</span><span>68% funded</span></div>
-            <div class="fund-track"><div class="fund-fill"></div></div>
-            <div class="fund-stats"><span class="fund-avail">A$14,280 available</span><span class="fund-max">Max A$1,200 per application</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px;font-family:var(--mono);">POOL THIS SEMESTER<span>68%</span></div>
+          <div class="fund-bar-bg"><div class="fund-bar-fill"></div></div>
+          <div class="fund-meta"><span style="color:var(--blue);font-weight:600;">A$14,280 available</span><span class="small">Max A$1,200 per application</span></div>
+          <div style="margin:12px 0 8px;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Application status</div>
+            <div class="status-track">
+              <div class="s-step active"><div class="s-dot">1</div><div class="s-label">Submitted</div></div>
+              <div class="s-line"></div>
+              <div class="s-step"><div class="s-dot">2</div><div class="s-label">In review</div></div>
+              <div class="s-line"></div>
+              <div class="s-step"><div class="s-dot">✓</div><div class="s-label">Approved</div></div>
+            </div>
+            <button class="sim-btn" id="status-btn" onclick="advanceStatus()">Simulate status update ›</button>
+            <div class="approved-msg" id="status-approved">✓ Credit approved — check your university email</div>
           </div>
-
-          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Application status</div>
-          <div class="status-track">
-            <div class="s-step active"><div class="s-dot">1</div><div class="s-label">Submitted</div></div>
-            <div class="s-line"></div>
-            <div class="s-step"><div class="s-dot">2</div><div class="s-label">In review</div></div>
-            <div class="s-line"></div>
-            <div class="s-step"><div class="s-dot">✓</div><div class="s-label">Approved</div></div>
-          </div>
-          <button class="sim-btn" id="status-btn" onclick="advanceStatus()">Simulate status update ›</button>
-          <div class="approved-msg" id="status-approved">Credit approved — check your university email</div>
-
-          <div class="not-loan-note">
-            <div class="not-loan-title">Not a loan — a shared safety net</div>
-            <div class="not-loan-body">Students contribute A$25/semester into a shared pool, co-matched by the university. Funds are grants for verified emergencies — bereavement, critical illness. No repayment required.</div>
-          </div>
-          <button class="btn-navy">Apply for emergency credit</button>
+          <div class="not-loan"><strong>Not a loan — a shared safety net</strong>Students contribute A$25/semester into a shared pool, co-matched by the university. Grants for verified emergencies. No repayment required.</div>
+          <button class="btn btn-amber" style="margin-bottom:4px;">Apply for emergency credit</button>
         </div>
       </div>
 
       <div class="e-card" style="margin-bottom:14px;">
-        <div class="e-card-head"><div class="e-card-icon">✈</div><div><div class="e-card-title">Flexible emergency flights</div><div class="e-card-sub">Last-minute availability · No change fees</div></div></div>
+        <div class="e-card-head"><div style="font-size:20px;">✈️</div><div><div class="e-card-title">Flexible emergency flights</div><div class="e-card-sub">Last-minute availability · No change fees</div></div></div>
         <div class="e-card-body">
-          <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Scanning unsold seat inventory across 6+ airlines for last-minute availability at reduced rates.</div>
-          <div class="e-flight"><div class="e-flight-top"><div><div class="e-flight-airline">Singapore Airlines</div><div class="e-flight-route">BNE → SIN → destination · next 48h</div></div><div class="e-flight-price">A$498</div></div><div class="e-flight-tags"><span class="e-tag e-tag-green">3 seats left</span><span class="e-tag e-tag-blue">Bags incl.</span><span class="e-tag e-tag-gold">Emergency rate</span></div></div>
-          <div class="e-flight"><div class="e-flight-top"><div><div class="e-flight-airline">China Southern</div><div class="e-flight-route">BNE → CAN → destination · next 72h</div></div><div class="e-flight-price">A$521</div></div><div class="e-flight-tags"><span class="e-tag e-tag-green">5 seats left</span><span class="e-tag e-tag-blue">Student fare</span></div></div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Scanning unsold inventory across 6+ airlines for last-minute availability.</div>
+          <div class="e-flight"><div class="e-flight-top"><div><div class="e-flight-airline">Singapore Airlines</div><div class="e-flight-route">BNE → SIN → destination · next 48h</div></div><div class="e-flight-price">A$498</div></div><div class="e-tags"><span class="chip chip-green" style="font-size:10px;">3 seats left</span><span class="chip chip-gray" style="font-size:10px;">Bags incl.</span><span class="chip chip-amber" style="font-size:10px;">Emergency rate</span></div></div>
+          <div class="e-flight"><div class="e-flight-top"><div><div class="e-flight-airline">China Southern</div><div class="e-flight-route">BNE → CAN → destination · next 72h</div></div><div class="e-flight-price">A$521</div></div><div class="e-tags"><span class="chip chip-green" style="font-size:10px;">5 seats left</span><span class="chip chip-blue" style="font-size:10px;">🎓 Student fare</span></div></div>
         </div>
       </div>
     </div>
@@ -648,39 +647,23 @@ body { background: var(--cream); font-family: var(--display); min-height: 100vh;
   </div><!-- /screens -->
 
   <div class="bottom-nav">
-    <button class="nav-tab active" id="tab-home" onclick="switchTab('home')">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
-    </button>
-    <button class="nav-tab" id="tab-trips" onclick="switchTab('trips')">
-      <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>Flights
-    </button>
-    <button class="nav-tab" id="tab-checklist" onclick="switchTab('checklist')">
-      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Checklist
-    </button>
-    <button class="nav-tab" id="tab-airport" onclick="switchTab('airport')">
-      <svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19.5 2.5S18 2 16.5 3.5L13 7 4.8 5.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>Airport
-    </button>
-    <button class="nav-tab" id="tab-emergency" onclick="switchTab('emergency')">
-      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.01 2.21 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>Emergency
-    </button>
+    <button class="nav-tab active" id="tab-home" onclick="switchTab('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+    <button class="nav-tab" id="tab-trips" onclick="switchTab('trips')"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>Flights</button>
+    <button class="nav-tab" id="tab-checklist" onclick="switchTab('checklist')"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Checklist</button>
+    <button class="nav-tab" id="tab-airport" onclick="switchTab('airport')"><svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19.5 2.5S18 2 16.5 3.5L13 7 4.8 5.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>Airport</button>
+    <button class="nav-tab" id="tab-emergency" onclick="switchTab('emergency')"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.01 2.21 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>Emergency</button>
   </div>
 </div>
 
 <script src="app.js"></script>
 <script>
-// Restore lang
 const saved = localStorage.getItem('fm_lang');
 if (saved) { document.getElementById('lang-select').value = saved; }
-
-// Status bar clock
 function updateClock() {
   const now = new Date();
-  const h = now.getHours().toString().padStart(2,'0');
-  const m = now.getMinutes().toString().padStart(2,'0');
-  document.getElementById('status-time').textContent = h + ':' + m;
+  document.getElementById('status-time').textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 }
-updateClock();
-setInterval(updateClock, 60000);
+updateClock(); setInterval(updateClock, 30000);
 </script>
 </body>
 </html>

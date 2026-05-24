@@ -221,10 +221,11 @@ function switchTab(tab) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('s-' + tab).classList.add('active');
-  document.getElementById('tab-' + tab).classList.add('active');
+  const navTab = document.getElementById('tab-' + tab);
+  if (navTab) navTab.classList.add('active');
 }
 
-/*— DEST CHANGE — updates home text too —*/
+/*— DEST NAMES —*/
 const destNames = {
   DEL:'New Delhi',BOM:'Mumbai',HYD:'Hyderabad',MAA:'Chennai',
   CAN:'Guangzhou',PEK:'Beijing',PVG:'Shanghai',CTU:'Chengdu',
@@ -238,12 +239,13 @@ const destNames = {
   JNB:'Johannesburg',NBO:'Nairobi',AKL:'Auckland'
 };
 
+/*— DEST CHANGE —*/
 function onDestChange() {
   const dest = document.getElementById('dest-select').value;
   if (dest && destNames[dest]) {
     const name = destNames[dest];
-    const el = document.getElementById('h-firsttime');
-    if (el) el.textContent = `First time flying to ${name}?`;
+    const ft = document.getElementById('h-firsttime');
+    if (ft) ft.textContent = `First time flying to ${name}?`;
     const route = document.getElementById('h-route');
     if (route) route.textContent = `Brisbane (BNE) → ${name}`;
   }
@@ -263,7 +265,7 @@ function toggleDestRef() {
   const arrow = document.getElementById('dest-ref-arrow');
   const open = body.classList.contains('open');
   body.classList.toggle('open', !open);
-  arrow.textContent = open ? '+ Show all' : '− Hide';
+  arrow.textContent = open ? '+ Show' : '− Hide';
 }
 
 /*— FILTERS —*/
@@ -279,8 +281,8 @@ function renderFlights() {
   const container = document.getElementById('flight-results');
   const label = document.getElementById('result-label');
   if (!dest) {
-    label.textContent = 'Select a destination above';
-    container.innerHTML = `<div style="text-align:center;padding:32px 20px;color:var(--muted);font-size:13px;font-family:var(--mono);">Choose your destination to see all available flights with true total cost — no hidden fees.</div>`;
+    label.textContent = 'Select a destination to see flights';
+    container.innerHTML = `<div style="text-align:center;padding:32px 20px;color:var(--muted);font-size:13px;">Choose your destination above to see all available flights with true total cost.</div>`;
     return;
   }
   let flights = flightDB[dest] || [];
@@ -288,56 +290,111 @@ function renderFlights() {
   if (state.filters.bagsIncluded) flights = flights.filter(f => f.bagsIncl);
   if (state.filters.unsoldSeats) flights = flights.filter(f => f.lastMinute);
   flights = flights.sort((a, b) => a.total - b.total);
+
   if (!flights.length) {
     label.textContent = '0 results — try adjusting filters';
-    container.innerHTML = `<div style="text-align:center;padding:28px 20px;color:var(--muted);font-size:13px;font-family:var(--mono);">No flights match your current filters.<br>Try turning off a filter above.</div>`;
+    container.innerHTML = `<div style="text-align:center;padding:28px 20px;color:var(--muted);font-size:13px;">No flights match your current filters.<br><span style="font-size:12px;">Try turning off a filter above.</span></div>`;
     return;
   }
+
   const destLabel = destNames[dest] || dest;
-  label.textContent = `${flights.length} result${flights.length > 1 ? 's' : ''} — BNE → ${destLabel}`;
+  label.textContent = `${flights.length} result${flights.length > 1 ? 's' : ''} — BNE → ${destLabel} — sorted by true total cost`;
+
   container.innerHTML = flights.map((f, i) => {
     const isBest = i === 0 && f.type !== 'warn';
     const type = isBest ? 'best' : f.type;
-    const tagMap = { best:'Best value', warn:'Hidden fees', deal:'Last-minute deal' };
-    const tag = tagMap[type] ? `<div class="f-tag ${type}">${tagMap[type]}</div>` : '';
-    const note = f.note ? `<div class="f-student-note">${f.note}</div>` : '';
-    const totalClass = type === 'warn' ? 'warn' : isBest ? 'best' : '';
-    const bagsClass = f.bagsIncl ? 'bags-good' : 'bags-bad';
-    return `<div class="f-card ${type} anim">
-      ${tag}
-      <div class="f-body">
-        <div class="f-airline">${f.airline}</div>
-        <div class="f-route">${f.via}</div>
-        ${note}
-        <div class="f-price-row">
-          <div class="f-total ${totalClass}">A$${f.total}</div>
-          <div class="f-true-label">true total</div>
+    const ribbonMap = { best:'BEST VALUE', warn:'HIDDEN FEES', deal:'LAST-MINUTE DEAL' };
+    const ribbon = ribbonMap[type] ? `<div class="fc-ribbon ${type}">${ribbonMap[type]}</div>` : '';
+    const note = f.note ? `<div class="fc-student-note">🎓 ${f.note}</div>` : '';
+    const totalClass = type === 'warn' ? 'amber' : isBest ? 'green' : 'muted';
+    const bagsClass = f.bagsIncl ? 'g' : 'a';
+    return `<div class="flight-card ${type} anim">
+      ${ribbon}
+      <div class="fc-body">
+        <div class="fc-top">
+          <div>
+            <div class="fc-airline">${f.airline}</div>
+            <div class="fc-route">${f.via}</div>
+            ${note}
+          </div>
+          <div style="text-align:right;">
+            <div class="fc-total ${totalClass}">A$${f.total}</div>
+            <div class="fc-note">true total</div>
+          </div>
         </div>
-        <div class="f-breakdown">
-          <div class="f-item"><div class="f-item-val">A$${f.base}</div><div class="f-item-lbl">Base</div></div>
-          <div class="f-item"><div class="f-item-val ${bagsClass}">${f.bags}</div><div class="f-item-lbl">Bags</div></div>
-          <div class="f-item"><div class="f-item-val">${f.seat > 0 ? 'A$'+f.seat : 'Incl.'}</div><div class="f-item-lbl">Seat</div></div>
-          <div class="f-item"><div class="f-item-val">${f.meal}</div><div class="f-item-lbl">Meal</div></div>
-          <div class="f-item"><div class="f-item-val">${f.duration}</div><div class="f-item-lbl">Journey</div></div>
+        <div class="fc-breakdown">
+          <div class="fc-item"><div class="fc-item-val">A$${f.base}</div><div class="fc-item-lbl">Base</div></div>
+          <div class="fc-item"><div class="fc-item-val ${bagsClass}">${f.bags}</div><div class="fc-item-lbl">Bags</div></div>
+          <div class="fc-item"><div class="fc-item-val">${f.seat > 0 ? 'A$'+f.seat : 'Incl.'}</div><div class="fc-item-lbl">Seat</div></div>
+          <div class="fc-item"><div class="fc-item-val">${f.meal}</div><div class="fc-item-lbl">Meal</div></div>
+          <div class="fc-item"><div class="fc-item-val">${f.duration}</div><div class="fc-item-lbl">Journey</div></div>
         </div>
+        <button class="fc-book-btn" onclick="openCheckout(${JSON.stringify(f).replace(/"/g,'&quot;')})">
+          Book this flight — A$${f.total}
+        </button>
       </div>
     </div>`;
   }).join('');
 }
 
-/*— CHECKLIST —*/
-function toggleItem(el) {
-  el.querySelector('.check-box').classList.toggle('done');
-  updateProgress();
+/*— CHECKOUT —*/
+function openCheckout(f) {
+  document.getElementById('co-airline').textContent = f.airline;
+  document.getElementById('co-route').textContent = f.via;
+  document.getElementById('co-total').textContent = 'A$' + f.total;
+  document.getElementById('co-total2').textContent = 'A$' + f.total;
+  document.getElementById('co-btn-total').textContent = 'A$' + f.total;
+  document.getElementById('co-subtitle').textContent = f.airline + ' · ' + f.via;
+  document.getElementById('co-base').textContent = 'A$' + f.base;
+  document.getElementById('co-bags').textContent = f.bagsIncl ? 'Included' : f.bags;
+  document.getElementById('co-seat').textContent = f.seat > 0 ? 'A$' + f.seat : 'Included';
+  // Hide nav during checkout
+  document.querySelector('.bottom-nav').style.display = 'none';
+  switchTab('checkout');
 }
+
+function confirmBooking() {
+  const ref = 'FM-2026-' + Math.random().toString(36).substring(2,6).toUpperCase() + '-' + Math.floor(Math.random()*9000+1000);
+  document.getElementById('confirm-ref').textContent = ref;
+  document.getElementById('confirm-overlay').style.display = 'flex';
+}
+
+function postConfirm() {
+  document.getElementById('confirm-overlay').style.display = 'none';
+  document.querySelector('.bottom-nav').style.display = 'flex';
+  switchTab('checklist');
+}
+
+// Override switchTab to restore nav when leaving checkout
+const _origSwitch = switchTab;
+function switchTab(tab) {
+  if (tab !== 'checkout') {
+    document.querySelector('.bottom-nav').style.display = 'flex';
+  }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('s-' + tab).classList.add('active');
+  const navTab = document.getElementById('tab-' + tab);
+  if (navTab) navTab.classList.add('active');
+}
+
+/*— CHECKLIST — fixed checkbox toggle —*/
+function toggleItem(el) {
+  const box = el.querySelector('.check-box-ui');
+  if (box) {
+    box.classList.toggle('done');
+    updateProgress();
+  }
+}
+
 function updateProgress() {
-  const all = document.querySelectorAll('#s-checklist .check-box').length;
-  const done = document.querySelectorAll('#s-checklist .check-box.done').length;
-  const pct = Math.round(done/all*100);
+  const all = document.querySelectorAll('#s-checklist .check-box-ui');
+  const done = document.querySelectorAll('#s-checklist .check-box-ui.done');
+  const pct = all.length > 0 ? Math.round((done.length / all.length) * 100) : 0;
   const fill = document.getElementById('progress-fill');
   const lbl = document.getElementById('progress-label');
   if (fill) fill.style.width = pct + '%';
-  if (lbl) lbl.textContent = done + ' of ' + all + ' complete';
+  if (lbl) lbl.textContent = done.length + ' of ' + all.length + ' complete';
 }
 
 /*— IMMIGRATION EXPAND —*/
@@ -345,18 +402,29 @@ function toggleQuestions(el) {
   const panel = el.nextElementSibling;
   const arrow = el.querySelector('.expand-arrow');
   const open = panel.style.maxHeight && panel.style.maxHeight !== '0px';
-  if (open) { panel.style.maxHeight = '0px'; panel.style.opacity = '0'; arrow.style.transform = 'rotate(0deg)'; }
-  else { panel.style.maxHeight = panel.scrollHeight + 'px'; panel.style.opacity = '1'; arrow.style.transform = 'rotate(90deg)'; }
+  if (open) {
+    panel.style.maxHeight = '0px';
+    panel.style.opacity = '0';
+    arrow.style.transform = 'rotate(0deg)';
+  } else {
+    panel.style.maxHeight = panel.scrollHeight + 'px';
+    panel.style.opacity = '1';
+    arrow.style.transform = 'rotate(90deg)';
+  }
 }
 
 /*— AIRPORT STEPS —*/
 function toggleStep(el) {
   const body = el.nextElementSibling;
-  const arrow = el.querySelector('.ag-chevron');
+  const arrow = el.querySelector('.ag-arrow');
   const open = body.classList.contains('open');
   document.querySelectorAll('.ag-body').forEach(b => { b.classList.remove('open'); b.style.maxHeight = '0px'; });
-  document.querySelectorAll('.ag-chevron').forEach(a => a.style.transform = 'rotate(0deg)');
-  if (!open) { body.classList.add('open'); body.style.maxHeight = body.scrollHeight + 'px'; arrow.style.transform = 'rotate(90deg)'; }
+  document.querySelectorAll('.ag-arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+  if (!open) {
+    body.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    arrow.style.transform = 'rotate(180deg)';
+  }
 }
 
 /*— EMERGENCY STATUS —*/
@@ -368,7 +436,10 @@ function advanceStatus() {
   steps.forEach(s => s.classList.remove('active', 'done'));
   lines.forEach(l => l.classList.remove('done'));
   const next = Math.min(current + 1, steps.length - 1);
-  for (let i = 0; i < next; i++) { steps[i].classList.add('done'); if (lines[i]) lines[i].classList.add('done'); }
+  for (let i = 0; i < next; i++) {
+    steps[i].classList.add('done');
+    if (lines[i]) lines[i].classList.add('done');
+  }
   steps[next].classList.add('active');
   if (next === steps.length - 1) {
     document.getElementById('status-btn').style.display = 'none';
@@ -376,53 +447,54 @@ function advanceStatus() {
   }
 }
 
-/*— DYNAMIC GREETING (local time wherever opened) —*/
-function getGreeting() {
+/*— DYNAMIC GREETING —*/
+function getGreeting(lang) {
   const h = new Date().getHours();
-  const lang = state.lang;
-  const greetings = {
-    en: h < 12 ? 'GOOD MORNING' : h < 17 ? 'GOOD AFTERNOON' : 'GOOD EVENING',
-    zh: h < 12 ? '早上好' : h < 17 ? '下午好' : '晚上好',
-    hi: h < 12 ? 'सुप्रभात' : h < 17 ? 'नमस्कार' : 'शुभ संध्या',
-    da: h < 12 ? 'GOD MORGEN' : h < 17 ? 'GOD EFTERMIDDAG' : 'GOD AFTEN',
-    no: h < 12 ? 'GOD MORGEN' : h < 17 ? 'GOD ETTERMIDDAG' : 'GOD KVELD',
-    ko: h < 12 ? '좋은 아침' : h < 17 ? '좋은 오후' : '좋은 저녁',
-    ja: h < 12 ? 'おはようございます' : h < 17 ? 'こんにちは' : 'こんばんは',
-    ar: h < 12 ? 'صباح الخير' : h < 17 ? 'مساء الخير' : 'مساء النور',
-    vi: h < 12 ? 'CHÀO BUỔI SÁNG' : h < 17 ? 'CHÀO BUỔI CHIỀU' : 'CHÀO BUỔI TỐI',
-    ne: h < 12 ? 'शुभ प्रभात' : h < 17 ? 'नमस्ते' : 'शुभ सन्ध्या',
-    id: h < 12 ? 'SELAMAT PAGI' : h < 17 ? 'SELAMAT SIANG' : 'SELAMAT MALAM',
-    es: h < 12 ? 'BUENOS DÍAS' : h < 17 ? 'BUENAS TARDES' : 'BUENAS NOCHES',
-    pt: h < 12 ? 'BOM DIA' : h < 17 ? 'BOA TARDE' : 'BOA NOITE',
-    fr: h < 12 ? 'BONJOUR' : h < 17 ? 'BON APRÈS-MIDI' : 'BONSOIR',
-    de: h < 12 ? 'GUTEN MORGEN' : h < 17 ? 'GUTEN TAG' : 'GUTEN ABEND',
-    tl: h < 12 ? 'MAGANDANG UMAGA' : h < 17 ? 'MAGANDANG HAPON' : 'MAGANDANG GABI',
-    ta: h < 12 ? 'காலை வணக்கம்' : h < 17 ? 'மதிய வணக்கம்' : 'மாலை வணக்கம்',
-    bn: h < 12 ? 'শুভ সকাল' : h < 17 ? 'শুভ দুপুর' : 'শুভ সন্ধ্যা',
+  const map = {
+    en:[  'GOOD MORNING','GOOD AFTERNOON','GOOD EVENING'],
+    zh:['早上好','下午好','晚上好'],
+    hi:['सुप्रभात','नमस्कार','शुभ संध्या'],
+    da:['GOD MORGEN','GOD EFTERMIDDAG','GOD AFTEN'],
+    no:['GOD MORGEN','GOD ETTERMIDDAG','GOD KVELD'],
+    ko:['좋은 아침','좋은 오후','좋은 저녁'],
+    ja:['おはようございます','こんにちは','こんばんは'],
+    ar:['صباح الخير','مساء الخير','مساء النور'],
+    vi:['CHÀO BUỔI SÁNG','CHÀO BUỔI CHIỀU','CHÀO BUỔI TỐI'],
+    ne:['शुभ प्रभात','नमस्ते','शुभ सन्ध्या'],
+    id:['SELAMAT PAGI','SELAMAT SIANG','SELAMAT MALAM'],
+    es:['BUENOS DÍAS','BUENAS TARDES','BUENAS NOCHES'],
+    pt:['BOM DIA','BOA TARDE','BOA NOITE'],
+    fr:['BONJOUR','BON APRÈS-MIDI','BONSOIR'],
+    de:['GUTEN MORGEN','GUTEN TAG','GUTEN ABEND'],
+    tl:['MAGANDANG UMAGA','MAGANDANG HAPON','MAGANDANG GABI'],
+    ta:['காலை வணக்கம்','மதிய வணக்கம்','மாலை வணக்கம்'],
+    bn:['শুভ সকাল','শুভ দুপুর','শুভ সন্ধ্যা'],
   };
-  return greetings[lang] || greetings.en;
+  const times = map[lang] || map.en;
+  const idx = h < 12 ? 0 : h < 17 ? 1 : 2;
+  return times[idx];
 }
 
 /*— LANGUAGE —*/
 const i18n = {
-  en: { hero:'Where are\nyou headed?', alertTitle:'Price drop alert', alertBody:'BNE → Guangzhou from A$521 — 2 seats left', qa1:'Find flights', qa2:'Checklist', qa3:'Airport guide', qa4:'Emergency', firsttime:'First time flying from Brisbane?' },
-  zh: { hero:'你要去\n哪里？', alertTitle:'价格下降提醒', alertBody:'BNE → 广州 仅需 A$521 — 剩余 2 个座位', qa1:'查找航班', qa2:'清单', qa3:'机场指南', qa4:'紧急支持', firsttime:'第一次从布里斯班飞行？' },
-  hi: { hero:'आप कहाँ\nजा रहे हैं?', alertTitle:'कीमत गिरने की सूचना', alertBody:'BNE → गुआंगझू A$521 से — 2 सीटें बची', qa1:'उड़ानें', qa2:'चेकलिस्ट', qa3:'हवाई अड्डा', qa4:'आपातकाल', firsttime:'पहली बार ब्रिस्बेन से उड़ रहे हैं?' },
-  da: { hero:'Hvor er du\npå vej hen?', alertTitle:'Prisfaldsadvarsel', alertBody:'BNE → Guangzhou fra A$521 — 2 sæder tilbage', qa1:'Find fly', qa2:'Tjekliste', qa3:'Lufthavnsvejledning', qa4:'Nødsituation', firsttime:'Flyver du for første gang fra Brisbane?' },
-  no: { hero:'Hvor skal\ndu hen?', alertTitle:'Prisvarsel', alertBody:'BNE → Guangzhou fra A$521 — 2 seter igjen', qa1:'Finn fly', qa2:'Sjekkliste', qa3:'Flyplassveiledning', qa4:'Nødsituasjon', firsttime:'Flyr du for første gang fra Brisbane?' },
-  ko: { hero:'어디로\n가십니까?', alertTitle:'가격 인하 알림', alertBody:'BNE → 광저우 A$521부터 — 2석 남음', qa1:'항공편 검색', qa2:'체크리스트', qa3:'공항 안내', qa4:'긴급 지원', firsttime:'브리즈번에서 처음 비행하시나요?' },
-  ja: { hero:'どこへ\n向かいますか？', alertTitle:'価格下落アラート', alertBody:'BNE → 広州 A$521から — 残り2席', qa1:'フライト検索', qa2:'チェックリスト', qa3:'空港ガイド', qa4:'緊急サポート', firsttime:'ブリスベンから初めて飛行しますか？' },
-  ar: { hero:'إلى أين\nأنت ذاهب؟', alertTitle:'تنبيه انخفاض السعر', alertBody:'BNE → غوانغتشو من A$521 — مقعدان متبقيان', qa1:'ابحث عن رحلات', qa2:'قائمة التحقق', qa3:'دليل المطار', qa4:'الطوارئ', firsttime:'هل تطير لأول مرة من بريزبان؟' },
-  vi: { hero:'Bạn đang\nđi đâu?', alertTitle:'Thông báo giảm giá', alertBody:'BNE → Quảng Châu từ A$521 — còn 2 ghế', qa1:'Tìm chuyến bay', qa2:'Danh sách', qa3:'Hướng dẫn sân bay', qa4:'Khẩn cấp', firsttime:'Lần đầu bay từ Brisbane?' },
-  ne: { hero:'तपाई कहाँ\nजाँदै हुनुहुन्छ?', alertTitle:'मूल्य घट्ने सूचना', alertBody:'BNE → गुवाङझउ A$521 बाट — 2 सिट बाँकी', qa1:'उडान खोज्नुहोस्', qa2:'सूची', qa3:'विमानस्थल गाइड', qa4:'आपतकाल', firsttime:'पहिलो पटक ब्रिस्बेनबाट उड्दै?' },
-  id: { hero:'Mau kemana\nkamu?', alertTitle:'Penurunan harga', alertBody:'BNE → Guangzhou mulai A$521 — 2 kursi tersisa', qa1:'Cari penerbangan', qa2:'Checklist', qa3:'Panduan bandara', qa4:'Darurat', firsttime:'Pertama kali terbang dari Brisbane?' },
-  es: { hero:'¿A dónde\nvas?', alertTitle:'Alerta de bajada de precio', alertBody:'BNE → Guangzhou desde A$521 — quedan 2 asientos', qa1:'Buscar vuelos', qa2:'Lista', qa3:'Guía del aeropuerto', qa4:'Emergencia', firsttime:'¿Primera vez volando desde Brisbane?' },
-  pt: { hero:'Para onde\nvocê vai?', alertTitle:'Alerta de queda de preço', alertBody:'BNE → Guangzhou a partir de A$521 — 2 assentos', qa1:'Buscar voos', qa2:'Lista', qa3:'Guia do aeroporto', qa4:'Emergência', firsttime:'Primeira vez voando de Brisbane?' },
-  fr: { hero:'Où allez-\nvous?', alertTitle:'Alerte baisse de prix', alertBody:'BNE → Guangzhou dès A$521 — 2 sièges restants', qa1:'Trouver des vols', qa2:'Liste de contrôle', qa3:'Guide aéroport', qa4:'Urgence', firsttime:'Premier vol depuis Brisbane?' },
-  de: { hero:'Wohin\ngeht es?', alertTitle:'Preisrückgang-Alarm', alertBody:'BNE → Guangzhou ab A$521 — noch 2 Plätze', qa1:'Flüge suchen', qa2:'Checkliste', qa3:'Flughafenführer', qa4:'Notfall', firsttime:'Erster Flug von Brisbane?' },
-  tl: { hero:'Saan ka\npupunta?', alertTitle:'Babala sa pagbaba ng presyo', alertBody:'BNE → Guangzhou mula A$521 — 2 upuan na lang', qa1:'Hanapin ang flight', qa2:'Checklist', qa3:'Gabay sa paliparan', qa4:'Emergency', firsttime:'Unang beses lumilipad mula Brisbane?' },
-  ta: { hero:'எங்கே\nசெல்கிறீர்கள்?', alertTitle:'விலை குறைவு எச்சரிக்கை', alertBody:'BNE → குவாங்சோ A$521 முதல் — 2 இருக்கைகள் மட்டுமே', qa1:'விமானங்கள் தேட', qa2:'சரிபார்ப்பு பட்டியல்', qa3:'விமான நிலைய வழிகாட்டி', qa4:'அவசரநிலை', firsttime:'பிரிஸ்பேனில் இருந்து முதல் முறை பறக்கிறீர்களா?' },
-  bn: { hero:'আপনি কোথায়\nযাচ্ছেন?', alertTitle:'মূল্য হ্রাস সতর্কতা', alertBody:'BNE → গুয়াংজু A$521 থেকে — ২টি আসন বাকি', qa1:'ফ্লাইট খুঁজুন', qa2:'চেকলিস্ট', qa3:'বিমানবন্দর গাইড', qa4:'জরুরি', firsttime:'ব্রিসবেন থেকে প্রথমবার উড়ছেন?' },
+  en:{hero:'Where are you headed?',alertTitle:'Price drop alert',alertBody:'BNE → Guangzhou from A$521 — 2 seats left',qa1:'Find flights',qa2:'Checklist',qa3:'Airport guide',qa4:'Emergency',firsttime:'First time flying from Brisbane?'},
+  zh:{hero:'你要去哪里？',alertTitle:'价格下降提醒',alertBody:'BNE → 广州 仅需 A$521 — 剩余 2 个座位',qa1:'查找航班',qa2:'清单',qa3:'机场指南',qa4:'紧急支持',firsttime:'第一次从布里斯班飞行？'},
+  hi:{hero:'आप कहाँ जा रहे हैं?',alertTitle:'कीमत गिरने की सूचना',alertBody:'BNE → गुआंगझू A$521 से — 2 सीटें बची',qa1:'उड़ानें',qa2:'चेकलिस्ट',qa3:'हवाई अड्डा',qa4:'आपातकाल',firsttime:'पहली बार ब्रिस्बेन से उड़ रहे हैं?'},
+  da:{hero:'Hvor er du på vej hen?',alertTitle:'Prisfaldsadvarsel',alertBody:'BNE → Guangzhou fra A$521 — 2 sæder tilbage',qa1:'Find fly',qa2:'Tjekliste',qa3:'Lufthavnsvejledning',qa4:'Nødsituation',firsttime:'Flyver du for første gang fra Brisbane?'},
+  no:{hero:'Hvor skal du hen?',alertTitle:'Prisvarsel',alertBody:'BNE → Guangzhou fra A$521 — 2 seter igjen',qa1:'Finn fly',qa2:'Sjekkliste',qa3:'Flyplassveiledning',qa4:'Nødsituasjon',firsttime:'Flyr du for første gang fra Brisbane?'},
+  ko:{hero:'어디로 가십니까?',alertTitle:'가격 인하 알림',alertBody:'BNE → 광저우 A$521부터 — 2석 남음',qa1:'항공편 검색',qa2:'체크리스트',qa3:'공항 안내',qa4:'긴급 지원',firsttime:'브리즈번에서 처음 비행하시나요?'},
+  ja:{hero:'どこへ向かいますか？',alertTitle:'価格下落アラート',alertBody:'BNE → 広州 A$521から — 残り2席',qa1:'フライト検索',qa2:'チェックリスト',qa3:'空港ガイド',qa4:'緊急サポート',firsttime:'ブリスベンから初めて飛行しますか？'},
+  ar:{hero:'إلى أين أنت ذاهب؟',alertTitle:'تنبيه انخفاض السعر',alertBody:'BNE → غوانغتشو من A$521 — مقعدان متبقيان',qa1:'ابحث عن رحلات',qa2:'قائمة التحقق',qa3:'دليل المطار',qa4:'الطوارئ',firsttime:'هل تطير لأول مرة من بريزبان؟'},
+  vi:{hero:'Bạn đang đi đâu?',alertTitle:'Thông báo giảm giá',alertBody:'BNE → Quảng Châu từ A$521 — còn 2 ghế',qa1:'Tìm chuyến bay',qa2:'Danh sách',qa3:'Hướng dẫn sân bay',qa4:'Khẩn cấp',firsttime:'Lần đầu bay từ Brisbane?'},
+  ne:{hero:'तपाई कहाँ जाँदै हुनुहुन्छ?',alertTitle:'मूल्य घट्ने सूचना',alertBody:'BNE → गुवाङझउ A$521 बाट — 2 सिट बाँकी',qa1:'उडान खोज्नुहोस्',qa2:'सूची',qa3:'विमानस्थल गाइड',qa4:'आपतकाल',firsttime:'पहिलो पटक ब्रिस्बेनबाट उड्दै?'},
+  id:{hero:'Mau kemana kamu?',alertTitle:'Penurunan harga',alertBody:'BNE → Guangzhou mulai A$521 — 2 kursi tersisa',qa1:'Cari penerbangan',qa2:'Checklist',qa3:'Panduan bandara',qa4:'Darurat',firsttime:'Pertama kali terbang dari Brisbane?'},
+  es:{hero:'¿A dónde vas?',alertTitle:'Alerta de bajada de precio',alertBody:'BNE → Guangzhou desde A$521 — quedan 2 asientos',qa1:'Buscar vuelos',qa2:'Lista',qa3:'Guía del aeropuerto',qa4:'Emergencia',firsttime:'¿Primera vez volando desde Brisbane?'},
+  pt:{hero:'Para onde você vai?',alertTitle:'Alerta de queda de preço',alertBody:'BNE → Guangzhou a partir de A$521 — 2 assentos',qa1:'Buscar voos',qa2:'Lista',qa3:'Guia do aeroporto',qa4:'Emergência',firsttime:'Primeira vez voando de Brisbane?'},
+  fr:{hero:'Où allez-vous?',alertTitle:'Alerte baisse de prix',alertBody:'BNE → Guangzhou dès A$521 — 2 sièges restants',qa1:'Trouver des vols',qa2:'Liste de contrôle',qa3:'Guide aéroport',qa4:'Urgence',firsttime:'Premier vol depuis Brisbane?'},
+  de:{hero:'Wohin geht es?',alertTitle:'Preisrückgang-Alarm',alertBody:'BNE → Guangzhou ab A$521 — noch 2 Plätze',qa1:'Flüge suchen',qa2:'Checkliste',qa3:'Flughafenführer',qa4:'Notfall',firsttime:'Erster Flug von Brisbane?'},
+  tl:{hero:'Saan ka pupunta?',alertTitle:'Babala sa pagbaba ng presyo',alertBody:'BNE → Guangzhou mula A$521 — 2 upuan na lang',qa1:'Hanapin ang flight',qa2:'Checklist',qa3:'Gabay sa paliparan',qa4:'Emergency',firsttime:'Unang beses lumilipad mula Brisbane?'},
+  ta:{hero:'எங்கே செல்கிறீர்கள்?',alertTitle:'விலை குறைவு எச்சரிக்கை',alertBody:'BNE → குவாங்சோ A$521 முதல் — 2 இருக்கைகள்',qa1:'விமானங்கள் தேட',qa2:'சரிபார்ப்பு பட்டியல்',qa3:'விமான நிலைய வழிகாட்டி',qa4:'அவசரநிலை',firsttime:'பிரிஸ்பேனில் இருந்து முதல் முறை?'},
+  bn:{hero:'আপনি কোথায় যাচ্ছেন?',alertTitle:'মূল্য হ্রাস সতর্কতা',alertBody:'BNE → গুয়াংজু A$521 থেকে — ২টি আসন বাকি',qa1:'ফ্লাইট খুঁজুন',qa2:'চেকলিস্ট',qa3:'বিমানবন্দর গাইড',qa4:'জরুরি',firsttime:'ব্রিসবেন থেকে প্রথমবার উড়ছেন?'},
 };
 
 function setLang(l) {
@@ -430,25 +502,23 @@ function setLang(l) {
   localStorage.setItem('fm_lang', l);
   const s = i18n[l] || i18n.en;
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  set('h-greeting', getGreeting());
-  set('h-hero', s.hero.replace('\n', '\n'));
-  const heroEl = document.getElementById('h-hero');
-  if (heroEl) heroEl.innerHTML = s.hero.replace('\n', '<br>');
+  set('h-greeting', getGreeting(l));
+  set('h-hero', s.hero);
   set('h-alert-title', s.alertTitle);
   set('h-alert-body', s.alertBody);
   set('h-qa1', s.qa1); set('h-qa2', s.qa2); set('h-qa3', s.qa3); set('h-qa4', s.qa4);
-  // Update firsttime based on current dest or default
   const dest = document.getElementById('dest-select') ? document.getElementById('dest-select').value : '';
   const destName = dest && destNames[dest] ? destNames[dest] : null;
-  const firsttime = destName ? `${s.firsttime.replace('Brisbane', destName)}` : s.firsttime;
-  set('h-firsttime', firsttime);
+  set('h-firsttime', destName ? s.firsttime.replace('Brisbane', destName) : s.firsttime);
   const sel = document.getElementById('lang-select');
   if (sel) sel.value = l;
 }
 
 /*— INIT —*/
-document.getElementById('date-input').valueAsDate = new Date();
-document.getElementById('dest-select').addEventListener('change', onDestChange);
+const dateInput = document.getElementById('date-input');
+if (dateInput) dateInput.valueAsDate = new Date();
+const destSel = document.getElementById('dest-select');
+if (destSel) destSel.addEventListener('change', onDestChange);
 updateProgress();
 const initLang = localStorage.getItem('fm_lang') || 'en';
 setLang(initLang);
