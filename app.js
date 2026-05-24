@@ -522,3 +522,144 @@ if (destSel) destSel.addEventListener('change', onDestChange);
 updateProgress();
 const initLang = localStorage.getItem('fm_lang') || 'en';
 setLang(initLang);
+
+/*— FEEDBACK FORM — one-time, end of journey —*/
+const FEEDBACK_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyuIBBlJp0pFt75L9vaMbpDMwUxjQWEJBpOpT7hMcROTADReVXccRfGsv-tTeirGO1n8A/exec";
+
+const fbRatings = {};
+let fbEase = 0;
+
+// Render star groups after DOM ready
+document.querySelectorAll('.fb-stars').forEach(container => {
+  const feature = container.dataset.feature;
+  fbRatings[feature] = 0;
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement('span');
+    star.className = 'fb-star';
+    star.textContent = '⭐';
+    star.dataset.val = i;
+    star.onclick = () => {
+      fbRatings[feature] = i;
+      container.querySelectorAll('.fb-star').forEach((s, idx) => s.classList.toggle('lit', idx < i));
+    };
+    container.appendChild(star);
+  }
+});
+
+function selectEase(el) {
+  fbEase = parseInt(el.dataset.val);
+  document.querySelectorAll('.ease-btn').forEach(b => b.classList.toggle('selected', b === el));
+}
+
+async function submitFullFeedback() {
+  const comment = document.getElementById('fb-comment').value.trim();
+  const name = document.getElementById('fb-name').value.trim() || 'Anonymous';
+  const btn = document.getElementById('fb-submit-btn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  const payload = {
+    name,
+    feature: 'full-journey-feedback',
+    ease: fbEase,
+    stars: Math.round(Object.values(fbRatings).reduce((a,b) => a+b, 0) / Object.keys(fbRatings).length) || 0,
+    comment: `Flights:${fbRatings.flights}★ Checklist:${fbRatings.checklist}★ Airport:${fbRatings.airport}★ Emergency:${fbRatings.emergency}★ Ease:${fbEase}/5 | ${comment}`
+  };
+
+  try {
+    await fetch(FEEDBACK_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+  } catch(e) { console.log('Sheets:', e); }
+
+  document.getElementById('feedback-form-wrap').style.display = 'none';
+  document.getElementById('feedback-success').style.display = 'block';
+}
+
+/*— AI BOT —*/
+const BOT_CONTEXT = `You are FliteMate, an AI travel assistant for international students flying home from Brisbane (BNE), Australia. You help students with:
+- Flight search, true total cost breakdown, baggage allowances, student fares
+- Immigration procedures at BNE: SmartGate, customs declaration, common questions officers ask
+- Airport guide: check-in, baggage drop, security, boarding, layovers
+- Emergency travel fund: how it works (not a loan, A$25/semester opt-in, university co-funded, A$1200 max, 3-5 day approval)
+- Visa requirements for common student home countries (India, China, Nepal, Vietnam, Indonesia, Korea, Japan)
+- General travel tips for long-haul flights
+
+Keep answers concise, friendly, and specific to international students in Australia. Max 3-4 sentences per answer. If unsure, say so and suggest they check official sources.`;
+
+const botHistory = [];
+
+function addBotMessage(text, role) {
+  const messages = document.getElementById('bot-messages');
+  const div = document.createElement('div');
+  div.className = `bot-msg ${role}`;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+  return div;
+}
+
+function showTyping() {
+  const messages = document.getElementById('bot-messages');
+  const div = document.createElement('div');
+  div.className = 'bot-typing';
+  div.id = 'bot-typing';
+  div.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function hideTyping() {
+  const el = document.getElementById('bot-typing');
+  if (el) el.remove();
+}
+
+async function sendBotMessage(text) {
+  // Hide suggestions after first message
+  const suggestions = document.getElementById('bot-suggestions');
+  if (suggestions) suggestions.style.display = 'none';
+
+  addBotMessage(text, 'user');
+  botHistory.push({ role: 'user', content: text });
+  document.getElementById('bot-input').value = '';
+
+  showTyping();
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        system: BOT_CONTEXT,
+        messages: botHistory
+      })
+    });
+    const data = await response.json();
+    const reply = data.content?.[0]?.text || "I'm not sure about that — check official airline or government sources for the latest info.";
+    hideTyping();
+    addBotMessage(reply, 'ai');
+    botHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    hideTyping();
+    addBotMessage("Sorry, I'm having trouble connecting right now. Try checking the Checklist tab for immigration and airport info.", 'ai');
+  }
+}
+
+function sendBotFromInput() {
+  const input = document.getElementById('bot-input');
+  const text = input.value.trim();
+  if (!text) return;
+  sendBotMessage(text);
+  input.style.height = '46px';
+}
+
+// Add greeting when bot tab opens
+const origSwitchTab = switchTab;
+function switchTab(tab) {
+  origSwitchTab(tab);
+  if (tab === 'bot' && document.getElementById('bot-messages').children.length === 0) {
+    setTimeout(() => {
+      addBotMessage("Hi! I'm your FliteMate AI assistant. Ask me anything about your trip — flights, immigration, baggage, the emergency fund, or airport tips. 👋", 'ai');
+    }, 300);
+  }
+}
