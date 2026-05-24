@@ -306,6 +306,8 @@ function renderFlights() {
   const destLabel = destNames[dest] || dest;
   label.textContent = `${flights.length} result${flights.length>1?'s':''} — BNE → ${destLabel} — sorted by true total cost`;
   const ribbonMap = { best:'BEST VALUE', warn:'HIDDEN FEES', deal:'LAST-MINUTE DEAL' };
+  // Store current flights for index-based lookup — avoids JSON-in-onclick encoding bugs
+  window._currentFlights = flights;
   container.innerHTML = flights.map((f,i) => {
     const isBest = i===0 && f.type!=='warn';
     const type = isBest ? 'best' : f.type;
@@ -313,7 +315,6 @@ function renderFlights() {
     const note = f.note ? `<div class="fc-student-note">🎓 ${f.note}</div>` : '';
     const totalClass = type==='warn'?'amber':isBest?'green':'muted';
     const bagsClass = f.bagsIncl?'g':'a';
-    const fStr = JSON.stringify(f).replace(/"/g,'&quot;');
     return `<div class="flight-card ${type} anim">
       ${ribbon}
       <div class="fc-body">
@@ -328,14 +329,16 @@ function renderFlights() {
           <div class="fc-item"><div class="fc-item-val">${f.meal}</div><div class="fc-item-lbl">Meal</div></div>
           <div class="fc-item"><div class="fc-item-val">${f.duration}</div><div class="fc-item-lbl">Journey</div></div>
         </div>
-        <button class="fc-book-btn" onclick="openCheckout(${fStr})">Book this flight — A$${f.total}</button>
+        <button class="fc-book-btn" onclick="openCheckout(${i})">Book this flight — A$${f.total}</button>
       </div>
     </div>`;
   }).join('');
 }
 
 /*— CHECKOUT —*/
-function openCheckout(f) {
+function openCheckout(idx) {
+  const f = (window._currentFlights || [])[idx];
+  if (!f) return;
   document.getElementById('co-airline').textContent = f.airline;
   document.getElementById('co-route').textContent = f.via;
   document.getElementById('co-total').textContent = 'A$' + f.total;
